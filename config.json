@@ -157,7 +157,10 @@
         },
         "url": "https://github.com/Moretti815/Home",
         "image": "/images/project.jpg",
-        "tags": ["主页", "github"],
+        "tags": [
+          "主页",
+          "github"
+        ],
         "icon": "far fa-house",
         "gradient": "from-blue-500 to-purple-600"
       }
@@ -166,18 +169,68 @@
   },
   "techStack": {
     "backend": [
-      { "name": "PHP", "level": 70, "color": "bg-blue-500", "icon": "fab fa-php" },
-      { "name": "Node.js", "level": 60, "color": "bg-green-500", "icon": "fab fa-node-js" },
-      { "name": "Python", "level": 80, "color": "bg-yellow-500", "icon": "fab fa-python" },
-      { "name": "MySQL", "level": 50, "color": "bg-red-500", "icon": "fas fa-database" }
+      {
+        "name": "PHP",
+        "level": 70,
+        "color": "bg-blue-500",
+        "icon": "fab fa-php"
+      },
+      {
+        "name": "Node.js",
+        "level": 60,
+        "color": "bg-green-500",
+        "icon": "fab fa-node-js"
+      },
+      {
+        "name": "Python",
+        "level": 80,
+        "color": "bg-yellow-500",
+        "icon": "fab fa-python"
+      },
+      {
+        "name": "MySQL",
+        "level": 50,
+        "color": "bg-red-500",
+        "icon": "fas fa-database"
+      }
     ],
     "frontend": [
-      { "name": "Html", "level": 80, "color": "bg-purple-500", "icon": "fas fa-laptop-code" },
-      { "name": "CSS", "level": 70, "color": "bg-red-500", "icon": "fas fa-tshirt" },
-      { "name": "JavaScript", "level": 70, "color": "bg-yellow-500", "icon": "fab fa-js" },
-      { "name": "React", "level": 60, "color": "bg-blue-500", "icon": "fab fa-react" },
-      { "name": "Vue", "level": 65, "color": "bg-green-500", "icon": "fab fa-vuejs" },
-      { "name": "Astro", "level": 80, "color": "bg-orange-500", "icon": "https://img.wkds.eu.org/link/Gg3kkwOr" }
+      {
+        "name": "Html",
+        "level": 80,
+        "color": "bg-purple-500",
+        "icon": "fas fa-laptop-code"
+      },
+      {
+        "name": "CSS",
+        "level": 70,
+        "color": "bg-red-500",
+        "icon": "fas fa-tshirt"
+      },
+      {
+        "name": "JavaScript",
+        "level": 70,
+        "color": "bg-yellow-500",
+        "icon": "fab fa-js"
+      },
+      {
+        "name": "React",
+        "level": 60,
+        "color": "bg-blue-500",
+        "icon": "fab fa-react"
+      },
+      {
+        "name": "Vue",
+        "level": 65,
+        "color": "bg-green-500",
+        "icon": "fab fa-vuejs"
+      },
+      {
+        "name": "Astro",
+        "level": 80,
+        "color": "bg-orange-500",
+        "icon": "https://img.wkds.eu.org/link/Gg3kkwOr"
+      }
     ]
   },
   "translations": {
@@ -227,19 +280,21 @@
       "en": "Friend Links"
     },
     "links": [
-    {
-    "id": "zhangheo",
-    "name": "张洪Heo",
-    "url": "https://blog.zhheo.com/",
-    "avatar": "https://img.zhheo.com/i/67d8fa75943e4.webp",
-    "screenshot": "https://img.zhheo.com/i/67d8fb3c51399.webp",
-    "description": {
-        "zh": "分享设计与科技生活",
-        "en": "Design and Tech Life"
-    },
-    "feed": "https://blog.zhheo.com/atom.xml",
-    "tags": ["推荐"]
-    }
+      {
+        "id": "zhangheo",
+        "name": "张洪Heo",
+        "url": "https://blog.zhheo.com/",
+        "avatar": "https://img.zhheo.com/i/67d8fa75943e4.webp",
+        "screenshot": "https://img.zhheo.com/i/67d8fb3c51399.webp",
+        "description": {
+          "zh": "分享设计与科技生活",
+          "en": "Design and Tech Life"
+        },
+        "feed": "https://blog.zhheo.com/atom.xml",
+        "tags": [
+          "推荐"
+        ]
+      }
     ]
   },
   "sponsors": {
