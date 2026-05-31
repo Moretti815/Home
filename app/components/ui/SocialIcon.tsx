@@ -52,12 +52,9 @@ export default function SocialIcon({ href, icon, title, show = true, theme, text
       }}
     >
       <div
-        className={`absolute inset-0 rounded-full transition-all duration-300 ${
-          theme === "dark"
-            ? "bg-blue-400"
-            : "bg-orange-400"
-        }`}
+        className="absolute inset-0 rounded-full transition-all duration-300"
         style={{
+          backgroundColor: theme === "dark" ? "#E18A3B" : "#80A492",
           opacity: isHovered ? 0.3 : 0,
           filter: "blur(8px)",
           transform: isHovered ? "scale(1.5)" : "scale(1)",

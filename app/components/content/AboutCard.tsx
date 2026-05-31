@@ -1,4 +1,4 @@
- /**
+/**
  * 关于我卡片组件
  * 展示个人信息、技术栈、当前专注方向和座右铭
  * 支持滚动入场动画
@@ -11,11 +11,18 @@ import { techStackConfig, aboutMeConfig } from "../../site-config";
 import { getThemeColors } from "../../themeConfig";
 import { useScrollAnimation } from "../../hooks/useScrollAnimation";
 
+// 主题色配置
+const THEME_COLORS = {
+  dark: "#E18A3B",
+  light: "#80A492",
+};
+
 export default function AboutCard() {
   const { language } = useLanguageStore();
   const { t } = useTranslation();
   const { theme } = useThemeStore();
   const colors = getThemeColors(theme);
+  const primaryColor = theme === "dark" ? THEME_COLORS.dark : THEME_COLORS.light;
 
   // 滚动动画 refs
   const { ref: aboutRef, isVisible: aboutVisible } = useScrollAnimation({ threshold: 0.1 });
@@ -33,14 +40,16 @@ export default function AboutCard() {
         }`}
       >
         {/* 发光边框效果 */}
-        <div className={`absolute -inset-1 rounded-2xl blur-lg opacity-50 group-hover:opacity-75 transition duration-500 ${
-          theme === "dark"
-            ? "bg-linear-to-r from-blue-500/30 via-purple-500/30 to-pink-500/30"
-            : "bg-linear-to-r from-sky-400/20 via-blue-400/20 to-indigo-400/20"
-        }`}></div>
+        <div 
+          className="absolute -inset-1 rounded-2xl blur-lg opacity-50 group-hover:opacity-75 transition duration-500"
+          style={{ backgroundColor: `${primaryColor}30` }}
+        ></div>
         <div className={`relative ${colors.cardBackground}/80 backdrop-blur-md rounded-2xl p-6 shadow-xl border ${colors.border} hover:${colors.borderHover} transition-all duration-300`}>
           <h3 className={`text-lg font-semibold mb-5 flex items-center gap-2 ${colors.text}`}>
-            <span className="w-8 h-8 rounded-lg bg-linear-to-br from-yellow-400 to-orange-500 flex items-center justify-center">
+            <span 
+              className="w-8 h-8 rounded-lg flex items-center justify-center"
+              style={{ backgroundColor: primaryColor }}
+            >
               <i className="fas fa-rocket text-white text-sm"></i>
             </span>
             {t("aboutMe")}
@@ -49,10 +58,10 @@ export default function AboutCard() {
           {/* 个人信息网格 */}
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             {[
-              { icon: "fas fa-user", color: "from-blue-400 to-blue-600", value: aboutMeConfig.name },
-              { icon: "fas fa-map-marker-alt", color: "from-red-400 to-red-600", value: aboutMeConfig.location[language] },
-              { icon: "fas fa-briefcase", color: "from-green-400 to-green-600", value: aboutMeConfig.focus[language] },
-              { icon: "fas fa-heart", color: "from-pink-400 to-pink-600", value: aboutMeConfig.hobbies[language] },
+              { icon: "fas fa-user", value: aboutMeConfig.name },
+              { icon: "fas fa-map-marker-alt", value: aboutMeConfig.location[language] },
+              { icon: "fas fa-briefcase", value: aboutMeConfig.focus[language] },
+              { icon: "fas fa-heart", value: aboutMeConfig.hobbies[language] },
             ].map((item) => (
               <div 
                 key={item.icon}
@@ -62,7 +71,10 @@ export default function AboutCard() {
                     : "bg-gray-50 hover:bg-gray-100 border border-gray-100"
                 }`}
               >
-                <span className={`w-8 h-8 rounded-lg bg-linear-to-br ${item.color} flex items-center justify-center shrink-0`}>
+                <span 
+                  className="w-8 h-8 rounded-lg flex items-center justify-center shrink-0"
+                  style={{ backgroundColor: primaryColor }}
+                >
                   <i className={`${item.icon} text-white text-xs`}></i>
                 </span>
                 <span className={`text-sm ${colors.textSecondary}`}>{item.value}</span>
@@ -79,14 +91,16 @@ export default function AboutCard() {
           techVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10'
         }`}
       >
-        <div className={`absolute -inset-1 rounded-2xl blur-lg opacity-50 group-hover:opacity-75 transition duration-500 ${
-          theme === "dark"
-            ? "bg-linear-to-r from-cyan-500/30 via-blue-500/30 to-purple-500/30"
-            : "bg-linear-to-r from-emerald-400/20 via-teal-400/20 to-cyan-400/20"
-        }`}></div>
+        <div 
+          className="absolute -inset-1 rounded-2xl blur-lg opacity-50 group-hover:opacity-75 transition duration-500"
+          style={{ backgroundColor: `${primaryColor}30` }}
+        ></div>
         <div className={`relative ${colors.cardBackground}/80 backdrop-blur-md rounded-2xl p-6 shadow-xl border ${colors.border} hover:${colors.borderHover} transition-all duration-300`}>
           <h3 className={`text-lg font-semibold mb-5 flex items-center gap-2 ${colors.text}`}>
-            <span className="w-8 h-8 rounded-lg bg-linear-to-br from-purple-400 to-violet-600 flex items-center justify-center">
+            <span 
+              className="w-8 h-8 rounded-lg flex items-center justify-center"
+              style={{ backgroundColor: primaryColor }}
+            >
               <i className="fas fa-tools text-white text-sm"></i>
             </span>
             {t("techStack")}
@@ -94,10 +108,10 @@ export default function AboutCard() {
 
           <div className="space-y-5">
             {[
-              { key: "backend", data: techStackConfig.backend, icon: "fas fa-server", gradient: "from-orange-500 to-red-500" },
-              { key: "mobile", data: techStackConfig.mobile, icon: "fas fa-mobile-alt", gradient: "from-blue-500 to-cyan-500" },
-              { key: "frontend", data: techStackConfig.frontend, icon: "fas fa-laptop-code", gradient: "from-purple-500 to-pink-500" },
-            ].map((category) => (
+              { key: "backend", data: techStackConfig.backend, icon: "fas fa-server" },
+              { key: "mobile", data: techStackConfig.mobile, icon: "fas fa-mobile-alt" },
+              { key: "frontend", data: techStackConfig.frontend, icon: "fas fa-laptop-code" },
+            ].filter(category => category.data && category.data.length > 0).map((category) => (
               <div key={category.key}>
                 <p className={`text-xs mb-2 flex items-center gap-2 ${colors.textSecondary}`}>
                   <i className={category.icon}></i>
@@ -111,9 +125,14 @@ export default function AboutCard() {
                     >
                       <span className="absolute inset-0 bg-white/20 rounded-full blur-sm group-hover/tag:blur-md transition-all duration-300 opacity-0 group-hover/tag:opacity-100"></span>
                       <span
-                        className={`relative ${tech.color} text-white text-xs px-3 py-1.5 rounded-full flex items-center gap-1.5 hover:scale-110 transition-all duration-300 cursor-default shadow-lg`}
+                        className="relative text-white text-xs px-3 py-1.5 rounded-full flex items-center gap-1.5 hover:scale-110 transition-all duration-300 cursor-default shadow-lg"
+                        style={{ backgroundColor: primaryColor }}
                       >
-                        <i className={tech.icon}></i>
+                        {tech.icon?.startsWith('http') ? (
+                          <img src={tech.icon} alt={tech.name} className="w-3.5 h-3.5 object-contain" />
+                        ) : (
+                          <i className={tech.icon}></i>
+                        )}
                         {tech.name}
                       </span>
                     </span>
@@ -132,10 +151,16 @@ export default function AboutCard() {
           focusVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10'
         }`}
       >
-        <div className="absolute -inset-1 bg-linear-to-r from-green-500/30 via-emerald-500/30 to-teal-500/30 rounded-2xl blur-lg opacity-50 group-hover:opacity-75 transition duration-500"></div>
+        <div 
+          className="absolute -inset-1 rounded-2xl blur-lg opacity-50 group-hover:opacity-75 transition duration-500"
+          style={{ backgroundColor: `${primaryColor}30` }}
+        ></div>
         <div className={`relative ${colors.cardBackground}/80 backdrop-blur-md rounded-2xl p-6 shadow-xl border ${colors.border} hover:${colors.borderHover} transition-all duration-300`}>
           <h3 className={`text-lg font-semibold mb-5 flex items-center gap-2 ${colors.text}`}>
-            <span className="w-8 h-8 rounded-lg bg-linear-to-br from-red-400 to-rose-600 flex items-center justify-center">
+            <span 
+              className="w-8 h-8 rounded-lg flex items-center justify-center"
+              style={{ backgroundColor: primaryColor }}
+            >
               <i className="fas fa-bullseye text-white text-sm"></i>
             </span>
             {t("currentFocus")}
@@ -151,7 +176,10 @@ export default function AboutCard() {
                     : "bg-gray-50 hover:bg-gray-100 border border-gray-100"
                 }`}
               >
-                <span className={`w-8 h-8 rounded-lg flex items-center justify-center shrink-0 mt-0.5 ${colors.iconBackground}`}>
+                <span 
+                  className="w-8 h-8 rounded-lg flex items-center justify-center shrink-0 mt-0.5"
+                  style={{ backgroundColor: `${primaryColor}20`, color: primaryColor }}
+                >
                   <i className={item.icon}></i>
                 </span>
                 <span className={`text-sm leading-relaxed ${colors.textSecondary}`}>{item.text[language]}</span>
@@ -168,7 +196,10 @@ export default function AboutCard() {
           mottoVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10'
         }`}
       >
-        <div className="absolute inset-0 bg-linear-to-r from-yellow-500/10 via-orange-500/10 to-red-500/10 blur-xl"></div>
+        <div 
+          className="absolute inset-0 blur-xl"
+          style={{ backgroundColor: `${primaryColor}10` }}
+        ></div>
         <div className="relative text-center py-6 px-8">
           <div className={`inline-flex items-center gap-2 px-6 py-3 rounded-full border ${
             theme === "dark" 

@@ -8,7 +8,8 @@
 import { useState, useEffect, useCallback } from "react";
 import Image from "next/image";
 import Link from "next/link";
-import { linksConfig, guestbookConfig, friendLinksConfig } from "./site-config";
+import { linksConfig, guideConfig } from "./site-config";
+import configData from "../config.json";
 import { useLanguageStore, useTranslation } from "./stores/language-store";
 import { useThemeStore } from "./stores/theme-store";
 import { useSiteConfig } from "./hooks/useSiteConfig";
@@ -17,15 +18,18 @@ import { useBackToTop } from "./hooks/useBackToTop";
 import { useTextColors } from "./hooks/useTextColors";
 // 内容组件
 import TypeWriter from "./components/content/TypeWriter";
-import LanguageSwitcher from "./components/ui/LanguageSwitcher";
+// import LanguageSwitcher from "./components/ui/LanguageSwitcher";
 import ThemeSwitcher from "./components/ui/ThemeSwitcher";
 import SocialIcon from "./components/ui/SocialIcon";
 import DrawnTitle from "./components/effects/DrawnTitle";
 import Avatar from "./components/media/Avatar";
 import AboutCard from "./components/content/AboutCard";
 import FeaturedProjects from "./components/content/FeaturedProjects";
+import MomentsTicker from "./components/content/MomentsTicker";
+import TimetableCard from "./components/content/TimetableCard";
 import Skills from "./components/content/Skills";
 import EffectsToggleButton from "./components/ui/EffectsToggleButton";
+import type { TimetableData } from "./types/timetable";
 // 效果组件
 import StarryBackground from "./components/effects/StarryBackground";
 import LightBackground from "./components/effects/LightBackground";
@@ -65,6 +69,8 @@ export default function Home() {
   const [phrasePositions, setPhrasePositions] = useState<{ [key: number]: 'left' | 'right' }>({});
   // 随机显示的索引
   const [visibleIndices, setVisibleIndices] = useState<number[]>([]);
+  // 课程表数据
+  const [timetableData, setTimetableData] = useState<TimetableData | null>(null);
 
   // 获取问候语的函数
   const getGreeting = useCallback(() => {
@@ -162,6 +168,71 @@ export default function Home() {
     setMounted(true);
   }, []);
 
+  // 应用自定义光标
+  useEffect(() => {
+    if (typeof window === "undefined") return;
+    if (window.innerWidth < 768) return; // 移动端不启用
+    
+    const showCustomCursor = configData.showCustomCursor ?? false;
+    const customCursorPath = configData.customCursorPath ?? "/cursors/default.cur";
+    
+    if (showCustomCursor) {
+      console.log("[Page] Applying custom cursor:", customCursorPath);
+      // 移除旧样式
+      const existingStyle = document.getElementById("page-cursor-style");
+      if (existingStyle) existingStyle.remove();
+      
+      // 添加新样式
+      const style = document.createElement("style");
+      style.id = "page-cursor-style";
+      style.textContent = `
+        * { cursor: url('${customCursorPath}'), auto !important; }
+      `;
+      document.head.appendChild(style);
+      console.log("[Page] Custom cursor style applied");
+      
+      return () => {
+        const style = document.getElementById("page-cursor-style");
+        if (style) style.remove();
+      };
+    }
+  }, []);
+
+  // 加载课程表数据
+  useEffect(() => {
+    const fetchTimetable = async () => {
+      try {
+        const response = await fetch("/大三下.json");
+        const data = await response.json();
+
+        // 转换数据格式
+        const timetable: TimetableData = {
+          courseLen: data.courseLen,
+          id: data.id,
+          name: data.name,
+          timeTable: data.timeTable,
+          settings: {
+            tableName: data.settings.tableName,
+            maxWeek: data.settings.maxWeek,
+            nodes: data.settings.nodes,
+            startDate: data.settings.startDate,
+            showSat: data.settings.showSat,
+            showSun: data.settings.showSun,
+            weekendDisplay: data.settings.weekendDisplay,
+          },
+          courses: data.courses,
+          schedules: data.schedules,
+        };
+
+        setTimetableData(timetable);
+      } catch (error) {
+        console.error("Failed to fetch timetable:", error);
+      }
+    };
+
+    fetchTimetable();
+  }, []);
+
   return (
     <>
       <LoadingScreen />
@@ -253,15 +324,15 @@ export default function Home() {
                 </span>
               </a>
             )}
-            {guestbookConfig?.enabled && (
+            {guideConfig?.enabled && (
               <Link 
-                href="/guestbook"
+                href="/guide"
                 className="group transition-all duration-300 flex items-center gap-2 px-3 py-2 rounded-lg hover:bg-white/10"
                 style={{ color: textSecondaryColor }}
               >
-                <i className="fas fa-comments fa-fw group-hover:scale-110 transition-transform"></i>
+                <i className="fas fa-compass fa-fw group-hover:scale-110 transition-transform"></i>
                 <span className="relative">
-                  {t("guestbook")}
+                  {t("guide")}
                   <span 
                     className="absolute bottom-0 left-0 w-0 h-0.5 transition-all duration-300 group-hover:w-full"
                     style={{ backgroundColor: textColor }}
@@ -269,55 +340,26 @@ export default function Home() {
                 </span>
               </Link>
             )}
-            {friendLinksConfig?.enabled && (
-              <Link 
-                href="/friends"
-                className="group transition-all duration-300 flex items-center gap-2 px-3 py-2 rounded-lg hover:bg-white/10"
-                style={{ color: textSecondaryColor }}
-              >
-                <i className="fas fa-link fa-fw group-hover:scale-110 transition-transform"></i>
-                <span className="relative">
-                  {t("friendLinks")}
-                  <span 
-                    className="absolute bottom-0 left-0 w-0 h-0.5 transition-all duration-300 group-hover:w-full"
-                    style={{ backgroundColor: textColor }}
-                  ></span>
-                </span>
-              </Link>
-            )}
-            <LanguageSwitcher />
+            {/* <LanguageSwitcher /> */}
             <ThemeSwitcher />
             {siteContent?.showEffectsToggle !== false && <EffectsToggleButton />}
           </div>
           
           <div className="md:hidden flex items-center gap-2">
-            {guestbookConfig?.enabled && (
+            {guideConfig?.enabled && (
               <Link 
-                href="/guestbook"
+                href="/guide"
                 className="w-8 h-8 flex items-center justify-center rounded-full hover:scale-110 transition-all duration-300"
                 style={{ 
                   backgroundColor: theme === "dark" ? "rgba(255,255,255,0.2)" : "rgba(229,231,235,1)",
                   color: textColor
                 }}
-                title={t("guestbook")}
+                title={t("guide")}
               >
-                <i className="fas fa-comments text-sm"></i>
+                <i className="fas fa-compass text-sm"></i>
               </Link>
             )}
-            {friendLinksConfig?.enabled && (
-              <Link 
-                href="/friends"
-                className="w-8 h-8 flex items-center justify-center rounded-full hover:scale-110 transition-all duration-300"
-                style={{ 
-                  backgroundColor: theme === "dark" ? "rgba(255,255,255,0.2)" : "rgba(229,231,235,1)",
-                  color: textColor
-                }}
-                title={t("friendLinks")}
-              >
-                <i className="fas fa-link text-sm"></i>
-              </Link>
-            )}
-            <LanguageSwitcher />
+            {/* <LanguageSwitcher /> */}
             <ThemeSwitcher />
           </div>
         </nav>
@@ -357,8 +399,8 @@ export default function Home() {
             )}
             
             <Avatar 
-              src="/images/avatar.jpg" 
-              alt="Amis" 
+              src="https://img.wkds.eu.org/link/B1XeEnx6" 
+              alt="Moretti" 
               size={140} 
               className=""
               onHoverStart={() => siteContent?.showGreetings !== false && setIsAvatarHovered(true)}
@@ -459,10 +501,20 @@ export default function Home() {
       <section id="content" className="py-16 px-6 md:px-12 relative">
         <div className={`absolute inset-0 ${
           theme === "dark" 
-            ? "bg-linear-to-b from-[#0a0a0a]/60 via-[#0f0f23]/80 to-[#1a1a2e]/90" 
-            : "bg-linear-to-b from-white/70 via-white/90 to-gray-50/95"
+            ? "bg-[#0f0f0f]" 
+            : "bg-gray-50"
         }`}></div>
         <div className="max-w-6xl mx-auto relative z-10 space-y-12">
+          {/* 说说滚动条 */}
+          <div className="w-full max-w-5xl mx-auto">
+            <MomentsTicker />
+          </div>
+          {/* 课程表卡片 */}
+          {timetableData && (
+            <div className="w-full max-w-5xl mx-auto">
+              <TimetableCard data={timetableData} />
+            </div>
+          )}
           <FeaturedProjects />
           <AboutCard />
           <Skills />
@@ -471,8 +523,8 @@ export default function Home() {
       
       <footer className={`py-8 px-6 border-t backdrop-blur-sm ${
         theme === "dark"
-          ? "bg-linear-to-b from-[#1a1a2e]/90 to-[#0f0f23]/95 text-white border-white/10"
-          : "bg-linear-to-b from-white/90 to-gray-50/95 text-gray-900 border-gray-200"
+          ? "bg-[#0f0f0f] text-white border-white/10"
+          : "bg-gray-50 text-gray-900 border-gray-200"
       }`}>
         <div className="max-w-6xl mx-auto text-center">
           <p className={theme === "dark" ? "text-white/60" : "text-gray-600"}>
@@ -501,9 +553,10 @@ export default function Home() {
 
       <button
         onClick={scrollToTop}
-        className={`fixed w-12 h-12 bg-blue-500 hover:bg-blue-600 text-white rounded-full shadow-lg flex items-center justify-center transition-all duration-300 z-50 ${
+        className={`fixed w-12 h-12 text-white rounded-full shadow-lg flex items-center justify-center transition-all duration-300 z-50 ${
           showBackToTop ? "opacity-100 translate-y-0" : "opacity-0 translate-y-10 pointer-events-none"
         } bottom-8 right-8`}
+        style={{ backgroundColor: theme === "dark" ? "#E18A3B" : "#80A492" }}
         aria-label="Back to top"
       >
         <i className="fas fa-arrow-up"></i>

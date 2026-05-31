@@ -1,46 +1,45 @@
 {
-  "showSkills": true,
+  "showSkills": false,
   "showProjects": true,
   "showLocalTime": true,
   "showGreetings": true,
   "showCustomCursor": true,
-  "showEffectsToggle": false,
-  "customCursorPath": "/cursors/watermelon.cur",
+  "customCursorPath": "/cursors/default.cur",
   "typeWriterEffects": {
     "glitchEffect": true,
     "colorGradient": false,
     "glitchProbability": 15,
     "glitchInterval": 1500,
-    "speedPreset": "custom",
-    "typeSpeed": 160,
+    "speedPreset": "medium",
+    "typeSpeed": 100,
     "deleteSpeed": 50,
     "pauseTime": 2000
   },
   "heroTitleEffects": {
-    "hoverPreset": "wobble"
+    "hoverPreset": "none"
   },
   "greetings": {
     "morning": {
-      "zh": "早上好！我是Amis！很高兴认识你！",
-      "en": "Good morning! I'm Amis! nice to meet you!"
+      "zh": "早上好！我是Moretti，很高兴认识你！",
+      "en": "Good morning! I'm Moretti, nice to meet you!"
     },
     "afternoon": {
-      "zh": "下午好！我是Amis！欢迎来到我的主页！",
-      "en": "Good afternoon! I'm Amis! welcome to my homepage!"
+      "zh": "下午好！我是Moretti，欢迎来到我的主页！",
+      "en": "Good afternoon! I'm Moretti, welcome to my homepage!"
     },
     "evening": {
-      "zh": "晚上好！我是Amis！希望你今天过得愉快！",
-      "en": "Good evening! I'm Amis! hope you're having a great day!"
+      "zh": "晚上好！我是Moretti，希望你今天过得愉快！",
+      "en": "Good evening! I'm Moretti, hope you're having a great day!"
     }
   },
   "site": {
-    "name": "Amis's Homepage",
-    "title": "Amis's Homepage",
-    "url": "https://www.amisweb.cn",
-    "ogImage": "/images/index.jpg",
+    "name": "Moretti's Homepage",
+    "title": "Moretti's Homepage",
+    "url": "https://home.2005815.xyz",
+    "ogImage": "https://openstorage.xfyousheng.com/asset/train/20260527/3ae8156a-d829-4319-98b1-998411975104.gif",
     "backgroundImage": {
-      "dark": "/images/index.jpg",
-      "light": "/images/index4.jpg"
+      "dark": "https://img.wkds.eu.org/link/xAYUdV8g",
+      "light": "https://jsd.268682.xyz/gh/Kemeow0815/img@main/img/bg.webp"
     },
     "textColor": {
       "dark": "#ffffff",
@@ -50,123 +49,96 @@
       "dark": "rgba(255, 255, 255, 0.9)",
       "light": "rgba(31, 41, 55, 0.9)"
     },
-    "author": "AmisKwok",
+    "author": "Moretti",
     "description": {
-      "zh": "后端开发者 | 移动端开发者。专注于 Java Spring Boot、Flutter 和 Next.js 开发。热爱编程，追求极致，永不止步。",
-      "en": "Backend Developer | Mobile Developer. Focused on Java Spring Boot, Flutter and Next.js development. Passionate about coding, pursuing excellence, never stopping."
+      "zh": "这是最好的时代，也是最坏的时代。",
+      "en": "It was the best of times, it was the worst of times."
     },
     "keywords": [
-      "Amis",
-      "AmisKwok",
+      "Moretti",
       "个人主页",
       "博客",
-      "技术",
-      "Java",
-      "Spring Boot",
-      "Flutter",
-      "Next.js"
+      "技术"
     ],
     "footer": {
-      "zh": "© 2026 Amis的个人主页. All Rights Reserved.",
-      "en": "© 2026 Amis's Personal Homepage. All Rights Reserved."
+      "zh": "© 2026 Moretti的个人主页. All Rights Reserved.",
+      "en": "© 2026 Moretti's Personal Homepage. All Rights Reserved."
     }
   },
   "profile": {
-    "name": "AmisKwok",
-    "avatar": "/images/avatar.jpg",
+    "name": "Moretti",
+    "avatar": "https://img.wkds.eu.org/link/AxUO7OXp",
     "location": {
-      "zh": "中国 🇨🇳",
+      "zh": "中国 江苏",
       "en": "China 🇨🇳"
     },
     "focus": {
-      "zh": "后端 & 移动端开发",
-      "en": "Backend & Mobile Dev"
+      "zh": "博客魔改 & Github项目探索",
+      "en": "Your Focus Area"
     },
     "hobbies": {
-      "zh": "编程、学习、开源",
-      "en": "Coding, Learning, Open Source"
+      "zh": "博客记录、资源分享、小说阅读",
+      "en": "Hobby1, Hobby2, Hobby3"
     },
     "motto": {
-      "zh": "至繁归于至简",
-      "en": "Simplicity is the ultimate sophistication"
+      "zh": "人生如逆旅，我亦是行人。",
+      "en": "Your Motto"
     },
     "typeWriterTexts": {
       "zh": [
-        "用代码构建精彩世界",
-        "热爱编程，追求极致，永不止步"
+        "欢迎来到我的主页！希望你一整天都开心！",
+        "总有些事情，高于其他。",
+        "人生如逆旅，我亦是行人。"
       ],
       "en": [
-        "Building a wonderful world with code",
-        "Passionate about coding, pursuing excellence, never stopping"
+        "First typewriter text",
+        "Second typewriter text"
       ]
     },
     "currentFocus": [
       {
-        "icon": "fas fa-satellite text-blue-400",
+        "icon": "fas fa-book-open text-blue-400",
         "text": {
-          "zh": "正在专注于后端服务与移动应用开发",
-          "en": "Working on Backend Services & Mobile Apps"
+          "zh": "完成大三学习中... ",
+          "en": "Working on..."
         }
       },
       {
-        "icon": "fas fa-seedling text-green-400",
+        "icon": "fas fa-briefcase text-green-400",
         "text": {
-          "zh": "正在学习云原生与微服务架构",
-          "en": "Learning Cloud Native & Microservices"
-        }
-      },
-      {
-        "icon": "fas fa-comments text-yellow-400",
-        "text": {
-          "zh": "欢迎交流 Java、Flutter、后端开发",
-          "en": "Ask me about Java, Flutter, Backend Dev"
+          "zh": "寻觅实习中... ",
+          "en": "Working on..."
         }
       }
     ]
   },
   "links": {
     "blog": {
-      "url": "https://www.amisblog.cn",
-      "show": true,
+      "url": "https://s.2005815.xyz/blog",
       "title": {
-        "zh": "Amis的博客",
-        "en": "Amis's Blog"
+        "zh": "博客",
+        "en": "Blog"
       },
       "description": {
-        "zh": "记录技术文章和生活感悟",
-        "en": "Technical articles and life insights"
+        "zh": "基于Github issues和Github action的博客魔改自用。",
+        "en": "My Tech Blog"
       },
       "icon": "fas fa-blog"
     },
     "github": {
-      "url": "https://github.com/AmisKwok",
-      "show": true,
+      "url": "https://s.2005815.xyz/github",
       "title": {
         "zh": "GitHub",
         "en": "GitHub"
       },
       "description": {
-        "zh": "开源项目和代码仓库",
-        "en": "Open source projects and code repositories"
+        "zh": "我的 GitHub",
+        "en": "My GitHub"
       },
       "icon": "fab fa-github"
     },
-    "gitee": {
-      "url": "https://gitee.com/AmisKwok",
-      "show": true,
-      "title": {
-        "zh": "Gitee",
-        "en": "Gitee"
-      },
-      "description": {
-        "zh": "国内代码托管平台",
-        "en": "Domestic code hosting platform"
-      },
-      "icon": "fas fa-code-branch"
-    },
     "email": {
-      "url": "mailto:amiskwokk@gmail.com",
-      "show": true,
+      "url": "https://s.200815.xyz/mail",
       "title": {
         "zh": "邮箱",
         "en": "Email"
@@ -177,192 +149,40 @@
   "projects": {
     "featured": [
       {
-        "id": "vibe-music-server",
-        "name": "Vibe Music Server",
+        "id": "Home",
+        "name": "主页",
         "description": {
-          "zh": "基于 Spring Boot 3 的高性能音乐服务后端系统，支持高并发访问、MinIO 分布式存储、Redis 智能缓存",
-          "en": "High-performance music service backend based on Spring Boot 3, supporting high concurrency, MinIO distributed storage, and Redis intelligent caching"
+          "zh": "基于开源项目自改的主页",
+          "en": "Project description in English"
         },
-        "url": "https://github.com/AmisKwok/vibe-music-server",
-        "image": "/images/index3.jpg",
-        "tags": [
-          "Spring Boot",
-          "Java",
-          "MySQL",
-          "Redis",
-          "MinIO"
-        ],
-        "icon": "fas fa-server",
+        "url": "https://github.com/Moretti815/Home",
+        "image": "/images/project.jpg",
+        "tags": ["主页", "github"],
+        "icon": "far fa-house",
         "gradient": "from-blue-500 to-purple-600"
-      },
-      {
-        "id": "vibe-music-app",
-        "name": "Vibe Music App",
-        "description": {
-          "zh": "基于 Flutter 的跨平台音乐播放器，支持 Android、iOS、Web 和桌面端",
-          "en": "Cross-platform music player based on Flutter, supporting Android, iOS, Web, and desktop"
-        },
-        "url": "https://github.com/AmisKwok/vibe-music-app",
-        "image": "/images/index2.jpg",
-        "tags": [
-          "Flutter",
-          "Dart",
-          "GetX",
-          "Material Design"
-        ],
-        "icon": "fas fa-music",
-        "gradient": "from-pink-500 to-rose-600"
-      },
-      {
-        "id": "amis-homepage",
-        "name": "Amis's Homepage",
-        "description": {
-          "zh": "个人主页项目，支持亮色/暗色主题切换、多语言、动态背景效果",
-          "en": "Personal homepage with light/dark theme switching, multi-language support, and dynamic backgrounds"
-        },
-        "url": "https://github.com/AmisKwok/AmisHomepage",
-        "image": "/images/index5.jpg",
-        "tags": [
-          "Next.js",
-          "TypeScript",
-          "Tailwind CSS",
-          "React"
-        ],
-        "icon": "fas fa-home",
-        "gradient": "from-violet-500 to-purple-600"
-      },
-      {
-        "id": "amis-blog-demo",
-        "name": "Amis's Blog Demo",
-        "description": {
-          "zh": "个人博客系统，支持 Markdown 编辑、图片管理、项目展示等功能",
-          "en": "Personal blog system with Markdown editing, image management, and project showcase"
-        },
-        "url": "https://github.com/AmisKwok/amis-s-blog-demo",
-        "image": "/images/index6.jpg",
-        "tags": [
-          "Next.js",
-          "React",
-          "Markdown",
-          "Tailwind CSS"
-        ],
-        "icon": "fas fa-blog",
-        "gradient": "from-emerald-500 to-teal-600"
       }
     ],
-    "moreProjectsUrl": "https://github.com/AmisKwok"
+    "moreProjectsUrl": "https://s.2005815.xyz/github"
   },
-  "skills": [
-    {
-      "name": "Java",
-      "level": 90,
-      "color": "from-orange-500 to-red-500",
-      "icon": "fab fa-java"
-    },
-    {
-      "name": "Spring Boot",
-      "level": 85,
-      "color": "from-green-500 to-emerald-600",
-      "icon": "fas fa-leaf"
-    },
-    {
-      "name": "Flutter",
-      "level": 80,
-      "color": "from-blue-500 to-cyan-600",
-      "icon": "fas fa-mobile-alt"
-    },
-    {
-      "name": "Next.js",
-      "level": 75,
-      "color": "from-gray-700 to-gray-900",
-      "icon": "fas fa-bolt"
-    },
-    {
-      "name": "MySQL",
-      "level": 85,
-      "color": "from-blue-600 to-blue-800",
-      "icon": "fas fa-database"
-    },
-    {
-      "name": "Redis",
-      "level": 75,
-      "color": "from-red-500 to-red-700",
-      "icon": "fas fa-bolt"
-    },
-    {
-      "name": "TypeScript",
-      "level": 70,
-      "color": "from-blue-600 to-indigo-700",
-      "icon": "fab fa-js"
-    },
-    {
-      "name": "React",
-      "level": 70,
-      "color": "from-cyan-500 to-blue-600",
-      "icon": "fab fa-react"
-    }
-  ],
   "techStack": {
     "backend": [
-      {
-        "name": "Java",
-        "color": "bg-orange-500",
-        "icon": "fab fa-java"
-      },
-      {
-        "name": "Spring Boot",
-        "color": "bg-green-600",
-        "icon": "fas fa-leaf"
-      },
-      {
-        "name": "MySQL",
-        "color": "bg-blue-600",
-        "icon": "fas fa-database"
-      },
-      {
-        "name": "Redis",
-        "color": "bg-red-500",
-        "icon": "fas fa-bolt"
-      }
-    ],
-    "mobile": [
-      {
-        "name": "Flutter",
-        "color": "bg-blue-500",
-        "icon": "fas fa-mobile-alt"
-      },
-      {
-        "name": "Dart",
-        "color": "bg-blue-700",
-        "icon": "fas fa-code"
-      },
-      {
-        "name": "Android",
-        "color": "bg-green-500",
-        "icon": "fab fa-android"
-      }
+      { "name": "PHP", "level": 70, "color": "bg-blue-500", "icon": "fab fa-php" },
+      { "name": "Node.js", "level": 60, "color": "bg-green-500", "icon": "fab fa-node-js" },
+      { "name": "Python", "level": 80, "color": "bg-yellow-500", "icon": "fab fa-python" },
+      { "name": "MySQL", "level": 50, "color": "bg-red-500", "icon": "fas fa-database" }
     ],
     "frontend": [
-      {
-        "name": "Next.js",
-        "color": "bg-gray-800",
-        "icon": "fas fa-bolt"
-      },
-      {
-        "name": "TypeScript",
-        "color": "bg-blue-600",
-        "icon": "fab fa-js"
-      },
-      {
-        "name": "React",
-        "color": "bg-cyan-500",
-        "icon": "fab fa-react"
-      }
+      { "name": "Html", "level": 80, "color": "bg-purple-500", "icon": "fas fa-laptop-code" },
+      { "name": "CSS", "level": 70, "color": "bg-red-500", "icon": "fas fa-tshirt" },
+      { "name": "JavaScript", "level": 70, "color": "bg-yellow-500", "icon": "fab fa-js" },
+      { "name": "React", "level": 60, "color": "bg-blue-500", "icon": "fab fa-react" },
+      { "name": "Vue", "level": 65, "color": "bg-green-500", "icon": "fab fa-vuejs" },
+      { "name": "Astro", "level": 80, "color": "bg-orange-500", "icon": "https://img.wkds.eu.org/link/Gg3kkwOr" }
     ]
   },
   "translations": {
     "zh": {
-      "siteTitle": "Amis的主页",
+      "siteTitle": "Moretti的主页",
       "quickLinks": "快速链接",
       "aboutMe": "关于我",
       "techStack": "技术栈",
@@ -373,23 +193,10 @@
       "featuredProjects": "精选项目",
       "skills": "技能",
       "viewProject": "查看项目",
-      "moreProjects": "更多项目",
-      "guestbook": "留言板",
-      "friendLinks": "友链",
-      "visitSite": "访问网站",
-      "noFriendLinks": "暂无友链",
-      "addFriendLink": "添加友链",
-      "friendLinkUrl": "网站地址",
-      "friendLinkName": "网站名称",
-      "friendLinkAvatar": "网站图标",
-      "friendLinkDescription": "网站描述",
-      "fetchSiteInfo": "获取网站信息",
-      "fetchingSiteInfo": "正在获取网站信息...",
-      "fetchSiteInfoSuccess": "网站信息获取成功",
-      "fetchSiteInfoFailed": "网站信息获取失败，请手动填写"
+      "moreProjects": "更多项目"
     },
     "en": {
-      "siteTitle": "Amis's Homepage",
+      "siteTitle": "Moretti's Homepage",
       "quickLinks": "Quick Links",
       "aboutMe": "About Me",
       "techStack": "Tech Stack",
@@ -401,24 +208,13 @@
       "skills": "Skills",
       "viewProject": "View Project",
       "moreProjects": "More Projects",
-      "guestbook": "Guestbook",
-      "friendLinks": "Friend Links",
-      "visitSite": "Visit Site",
-      "noFriendLinks": "No friend links yet",
-      "addFriendLink": "Add Friend Link",
-      "friendLinkUrl": "Website URL",
-      "friendLinkName": "Website Name",
-      "friendLinkAvatar": "Website Icon",
-      "friendLinkDescription": "Website Description",
-      "fetchSiteInfo": "Fetch Site Info",
-      "fetchingSiteInfo": "Fetching site info...",
-      "fetchSiteInfoSuccess": "Site info fetched successfully",
-      "fetchSiteInfoFailed": "Failed to fetch site info, please fill manually"
+      "guestbook": "留言板",
+      "friendLinks": "友链"
     }
   },
   "guestbook": {
     "enabled": true,
-    "walineUrl": "https://www.amisweb.top",
+    "walineUrl": "",
     "title": {
       "zh": "留言板",
       "en": "Guestbook"
@@ -431,65 +227,112 @@
       "en": "Friend Links"
     },
     "links": [
+    {
+    "id": "zhangheo",
+    "name": "张洪Heo",
+    "url": "https://blog.zhheo.com/",
+    "avatar": "https://img.zhheo.com/i/67d8fa75943e4.webp",
+    "screenshot": "https://img.zhheo.com/i/67d8fb3c51399.webp",
+    "description": {
+        "zh": "分享设计与科技生活",
+        "en": "Design and Tech Life"
+    },
+    "feed": "https://blog.zhheo.com/atom.xml",
+    "tags": ["推荐"]
+    }
+    ]
+  },
+  "sponsors": {
+    "enabled": true,
+    "title": {
+      "zh": "赞助者",
+      "en": "Sponsors"
+    },
+    "list": [
       {
-        "id": "friend-1774035561159-13fhqw0v3",
-        "url": "https://www.amisblog.cn",
-        "name": "Amis's Blog",
-        "avatar": "https://www.amisblog.cn/favicon.png",
-        "description": {
-          "zh": "Amis 的个人博客，记录开发、探索、笔记。 更新代码仓库。",
-          "en": "Amis 的个人博客，记录开发、探索、笔记。 更新代码仓库。"
-        }
-      },
+        "name": "名称示例",
+        "message": "留言示例",
+        "amount": "¥8.88",
+        "date": "2026-04-14",
+        "avatar": "https://openstorage.xfyousheng.com/asset/train/20260527/3ae8156a-d829-4319-98b1-998411975104.gif"
+      }
+    ]
+  },
+  "momentsTicker": {
+    "enabled": true,
+    "dataSource": "moments",
+    "maxItems": 5,
+    "scrollSpeed": 3000
+  },
+  "guide": {
+    "enabled": true,
+    "title": {
+      "zh": "导航",
+      "en": "Guide"
+    },
+    "description": {
+      "zh": "主页的其他页面",
+      "en": "Practical tools and resource navigation to help you quickly find what you need."
+    },
+    "categories": [
       {
-        "id": "friend-1774194093621-ntu33qr5h",
-        "url": "https://suko.online",
-        "name": "Homo Faber",
-        "avatar": "https://suko.online/favicon.png",
-        "description": {
-          "zh": "gesiiss的个人博客",
-          "en": "gesiiss的个人博客"
-        }
-      },
-      {
-        "id": "friend-1774194894718-axhj6nutt",
-        "url": "https://blog.hesuisui.top/",
-        "name": "许家大院 - 尝尝酒酒，瓶瓶安安。",
-        "avatar": "https://blog.hesuisui.top/upload/222141nc05bz5jvq5vd51k.jpg",
-        "description": {
-          "zh": "许家大院-和岁岁",
-          "en": "许家大院-和岁岁"
-        }
-      },
-      {
-        "id": "friend-1774634351991-887prk1uz",
-        "url": "https://www.guirlan.de",
-        "name": "小岚的杂物间",
-        "avatar": "https://www.guirlan.de/favicon.ico",
-        "description": {
-          "zh": "这里是岚天呀的小窝，记载了我捣鼓各种东西时产生的奇思妙想。",
-          "en": "这里是岚天呀的小窝，记载了我捣鼓各种东西时产生的奇思妙想。"
-        }
-      },
-      {
-        "id": "friend-1775191353142-y9myu1xuj",
-        "url": "https://llds.cloud/",
-        "name": "LsAng",
-        "avatar": "https://llds.cloud/lsang.webp",
-        "description": {
-          "zh": "LsAng",
-          "en": "LsAng"
-        }
-      },
-      {
-        "id": "friend-1778644107221-xhrj8pz7z",
-        "url": "https://qingzhou.dpdns.org/",
-        "name": "晴宙-官网",
-        "avatar": "https://pilvocmbhhgywprdywkx.supabase.co/storage/v1/object/public/images/avatar/avatar.jpg",
-        "description": {
-          "zh": "",
-          "en": ""
-        }
+        "id": "page",
+        "title": {
+          "zh": "我的页面",
+          "en": "Tools"
+        },
+        "items": [
+          {
+            "id": "friends",
+            "title": "友人帐",
+            "description": {
+              "zh": "我的网上邻居展示页面",
+              "en": "Online JSON formatter, validator and compressor"
+            },
+            "url": "/friends",
+            "icon": "tabler:friends"
+          },
+          {
+            "id": "memos",
+            "title": "即刻短文",
+            "description": {
+              "zh": "我的说说页面",
+              "en": "Online image compression tool, supports multiple formats"
+            },
+            "url": "/moments",
+            "icon": "solar:notes-bold-duotone"
+          },
+          {
+            "id": "guestbook",
+            "title": "留言板",
+            "description": {
+              "zh": "在这里留言~",
+              "en": "Online regular expression tester"
+            },
+            "url": "/guestbook",
+            "icon": "tabler:message"
+          },
+          {
+            "id": "reward",
+            "title": "赞助",
+            "description": {
+              "zh": "我的赞助页面",
+              "en": "Online regular expression tester"
+            },
+            "url": "/reward",
+            "icon": "octicon:sponsor-tiers-16"
+          },
+          {
+            "id": "timetable",
+            "title": "课程表",
+            "description": {
+              "zh": "查看本周课程安排",
+              "en": "View this week's schedule"
+            },
+            "url": "/timetable",
+            "icon": "tabler:calendar"
+          }
+        ]
       }
     ]
   }

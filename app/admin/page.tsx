@@ -164,6 +164,7 @@ export default function ConfigPage() {
     { id: 'skills', title: 'skills', icon: 'fas fa-chart-line', gradient: 'from-emerald-500 to-teal-600', expanded: true },
     { id: 'guestbook', title: 'guestbookSettings', icon: 'fas fa-comments', gradient: 'from-pink-500 to-rose-600', expanded: true },
     { id: 'friendLinks', title: 'friendLinksSettings', icon: 'fas fa-user-friends', gradient: 'from-violet-500 to-purple-600', expanded: true },
+    { id: 'sponsors', title: 'sponsorsSettings', icon: 'fas fa-heart', gradient: 'from-red-500 to-pink-600', expanded: true },
     { id: 'music', title: 'uploadMusic', icon: 'fas fa-music', gradient: 'from-pink-500 to-purple-600', expanded: true },
   ]);
   
@@ -548,7 +549,10 @@ export default function ConfigPage() {
         url: '',
         name: '',
         avatar: '',
-        description: { zh: '', en: '' }
+        screenshot: '',
+        description: { zh: '', en: '' },
+        feed: '',
+        tags: []
       };
       newConfig.friendLinks.links = [...newConfig.friendLinks.links, newLink];
       return { ...prev, config: newConfig };
@@ -559,6 +563,36 @@ export default function ConfigPage() {
     setState(prev => {
       const newConfig = { ...prev.config };
       newConfig.friendLinks.links = newConfig.friendLinks.links.filter((_: any, i: number) => i !== index);
+      return { ...prev, config: newConfig };
+    });
+  };
+
+  // 添加赞助者
+  const addSponsor = () => {
+    setState(prev => {
+      const newConfig = { ...prev.config };
+      if (!newConfig.sponsors) {
+        newConfig.sponsors = { enabled: true, title: { zh: '赞助者', en: 'Sponsors' }, list: [] };
+      }
+      if (!newConfig.sponsors.list) {
+        newConfig.sponsors.list = [];
+      }
+      const newSponsor = {
+        name: '',
+        message: '',
+        amount: '¥',
+        date: new Date().toISOString().split('T')[0]
+      };
+      newConfig.sponsors.list = [...newConfig.sponsors.list, newSponsor];
+      return { ...prev, config: newConfig };
+    });
+  };
+
+  // 移除赞助者
+  const removeSponsor = (index: number) => {
+    setState(prev => {
+      const newConfig = { ...prev.config };
+      newConfig.sponsors.list = newConfig.sponsors.list.filter((_: any, i: number) => i !== index);
       return { ...prev, config: newConfig };
     });
   };
@@ -2118,6 +2152,16 @@ export default function ConfigPage() {
                             </div>
                             <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
                               <div className="md:col-span-2">
+                                <label className={`block text-xs font-medium mb-1 ${colors.textSecondary}`}>{t('friendLinkId')}</label>
+                                <input
+                                  type="text"
+                                  value={link.id || ''}
+                                  onChange={(e) => handleInputChange(`friendLinks.links.${index}.id`, e.target.value)}
+                                  className={`w-full px-3 py-2 rounded-lg border ${colors.input} text-sm`}
+                                  placeholder="unique-id"
+                                />
+                              </div>
+                              <div className="md:col-span-2">
                                 <label className={`block text-xs font-medium mb-1 ${colors.textSecondary}`}>{t('friendLinkUrl')}</label>
                                 <div className="flex gap-2">
                                   <input
@@ -2153,6 +2197,7 @@ export default function ConfigPage() {
                                   value={link.avatar || ''}
                                   onChange={(e) => handleInputChange(`friendLinks.links.${index}.avatar`, e.target.value)}
                                   className={`w-full px-3 py-2 rounded-lg border ${colors.input} text-sm`}
+                                  placeholder="https://example.com/avatar.png"
                                 />
                               </div>
                               <div className="md:col-span-2">
@@ -2162,6 +2207,7 @@ export default function ConfigPage() {
                                   value={link.description?.zh || ''}
                                   onChange={(e) => handleInputChange(`friendLinks.links.${index}.description.zh`, e.target.value)}
                                   className={`w-full px-3 py-2 rounded-lg border ${colors.input} text-sm`}
+                                  placeholder="网站描述"
                                 />
                               </div>
                               <div className="md:col-span-2">
@@ -2171,6 +2217,155 @@ export default function ConfigPage() {
                                   value={link.description?.en || ''}
                                   onChange={(e) => handleInputChange(`friendLinks.links.${index}.description.en`, e.target.value)}
                                   className={`w-full px-3 py-2 rounded-lg border ${colors.input} text-sm`}
+                                  placeholder="Site description"
+                                />
+                              </div>
+                              <div className="md:col-span-2">
+                                <label className={`block text-xs font-medium mb-1 ${colors.textSecondary}`}>{t('friendLinkScreenshot')}</label>
+                                <input
+                                  type="text"
+                                  value={link.screenshot || ''}
+                                  onChange={(e) => handleInputChange(`friendLinks.links.${index}.screenshot`, e.target.value)}
+                                  className={`w-full px-3 py-2 rounded-lg border ${colors.input} text-sm`}
+                                  placeholder="https://example.com/screenshot.png"
+                                />
+                              </div>
+                              <div className="md:col-span-2">
+                                <label className={`block text-xs font-medium mb-1 ${colors.textSecondary}`}>{t('friendLinkFeed')}</label>
+                                <input
+                                  type="text"
+                                  value={link.feed || ''}
+                                  onChange={(e) => handleInputChange(`friendLinks.links.${index}.feed`, e.target.value)}
+                                  className={`w-full px-3 py-2 rounded-lg border ${colors.input} text-sm`}
+                                  placeholder="https://example.com/atom.xml"
+                                />
+                              </div>
+                              <div className="md:col-span-2">
+                                <label className={`block text-xs font-medium mb-1 ${colors.textSecondary}`}>{t('friendLinkTags')}</label>
+                                <input
+                                  type="text"
+                                  value={link.tags?.join(', ') || ''}
+                                  onChange={(e) => handleInputChange(`friendLinks.links.${index}.tags`, e.target.value.split(',').map((t: string) => t.trim()).filter(Boolean))}
+                                  className={`w-full px-3 py-2 rounded-lg border ${colors.input} text-sm`}
+                                  placeholder="标签1, 标签2, 标签3"
+                                />
+                                <p className={`text-xs mt-1 ${colors.textSecondary}`}>{t('friendLinkTagsHint')}</p>
+                              </div>
+                            </div>
+                          </div>
+                        ))}
+                      </div>
+                    )}
+                  </div>
+                )}
+              </section>
+              
+              <section 
+                ref={el => { sectionsRef.current['sponsors'] = el; }}
+                id="sponsors"
+                className={`rounded-xl sm:rounded-2xl p-4 sm:p-6 ${colors.card} backdrop-blur-md scroll-mt-4 overflow-hidden`}
+              >
+                {renderSectionHeader(sections[9])}
+                {sections[9].expanded && (
+                  <div className="mt-6 space-y-6">
+                    <div className={`p-4 rounded-xl ${theme === 'dark' ? 'bg-white/5' : 'bg-gray-50'}`}>
+                      <div className="flex items-center justify-between">
+                        <div className="flex items-center gap-3">
+                          <div className="w-10 h-10 rounded-xl bg-linear-to-r from-red-500 to-pink-600 flex items-center justify-center shadow-lg">
+                            <i className="fas fa-heart text-white text-sm"></i>
+                          </div>
+                          <div>
+                            <label className={`block text-sm font-medium ${colors.text}`}>{t('sponsorsSettings')}</label>
+                            <p className={`text-xs ${colors.textSecondary}`}>{t('enableSponsors')}</p>
+                          </div>
+                        </div>
+                        <button
+                          onClick={() => handleInputChange('sponsors.enabled', !state.config.sponsors?.enabled)}
+                          className={`relative w-14 h-7 rounded-full transition-all duration-300 ${
+                            state.config.sponsors?.enabled 
+                              ? 'bg-linear-to-r from-red-500 to-pink-600' 
+                              : theme === 'dark' ? 'bg-white/20' : 'bg-gray-300'
+                          }`}
+                        >
+                          <span className={`absolute top-1 w-5 h-5 rounded-full bg-white shadow-md transition-all duration-300 ${state.config.sponsors?.enabled ? 'left-8' : 'left-1'}`} />
+                        </button>
+                      </div>
+                    </div>
+                    
+                    {state.config.sponsors?.enabled && (
+                      <div className="space-y-4">
+                        <BilingualInput
+                          label={t('sponsorsTitle')}
+                          valueZh={state.config.sponsors?.title?.zh || ''}
+                          valueEn={state.config.sponsors?.title?.en || ''}
+                          onChangeZh={(value) => handleInputChange('sponsors.title.zh', value)}
+                          onChangeEn={(value) => handleInputChange('sponsors.title.en', value)}
+                          colors={colors}
+                          placeholderZh="赞助者"
+                          placeholderEn="Sponsors"
+                        />
+                        
+                        <button
+                          onClick={addSponsor}
+                          className={`w-full py-3 rounded-xl border-2 border-dashed transition-all flex items-center justify-center gap-2 ${
+                            theme === 'dark' 
+                              ? 'border-white/20 hover:border-white/40 text-white/60 hover:text-white/80' 
+                              : 'border-gray-300 hover:border-gray-400 text-gray-500 hover:text-gray-700'
+                          }`}
+                        >
+                          <i className="fas fa-plus"></i>
+                          {t('addSponsor')}
+                        </button>
+                        
+                        {state.config.sponsors?.list?.map((sponsor: any, index: number) => (
+                          <div key={index} className={`p-4 rounded-xl ${theme === 'dark' ? 'bg-white/5' : 'bg-gray-50'} space-y-3`}>
+                            <div className="flex items-center justify-between">
+                              <span className={`font-semibold ${colors.text}`}>#{index + 1}</span>
+                              <button
+                                onClick={() => removeSponsor(index)}
+                                className={`w-8 h-8 rounded-lg flex items-center justify-center transition-all ${colors.buttonDelete}`}
+                              >
+                                <i className="fas fa-trash-alt text-sm"></i>
+                              </button>
+                            </div>
+                            <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+                              <div>
+                                <label className={`block text-xs font-medium mb-1 ${colors.textSecondary}`}>{t('sponsorName')}</label>
+                                <input
+                                  type="text"
+                                  value={sponsor.name || ''}
+                                  onChange={(e) => handleInputChange(`sponsors.list.${index}.name`, e.target.value)}
+                                  className={`w-full px-3 py-2 rounded-lg border ${colors.input} text-sm`}
+                                  placeholder={t('sponsorNamePlaceholder')}
+                                />
+                              </div>
+                              <div>
+                                <label className={`block text-xs font-medium mb-1 ${colors.textSecondary}`}>{t('sponsorAmount')}</label>
+                                <input
+                                  type="text"
+                                  value={sponsor.amount || ''}
+                                  onChange={(e) => handleInputChange(`sponsors.list.${index}.amount`, e.target.value)}
+                                  className={`w-full px-3 py-2 rounded-lg border ${colors.input} text-sm`}
+                                  placeholder="¥8.88"
+                                />
+                              </div>
+                              <div>
+                                <label className={`block text-xs font-medium mb-1 ${colors.textSecondary}`}>{t('sponsorDate')}</label>
+                                <input
+                                  type="date"
+                                  value={sponsor.date || ''}
+                                  onChange={(e) => handleInputChange(`sponsors.list.${index}.date`, e.target.value)}
+                                  className={`w-full px-3 py-2 rounded-lg border ${colors.input} text-sm`}
+                                />
+                              </div>
+                              <div className="md:col-span-2">
+                                <label className={`block text-xs font-medium mb-1 ${colors.textSecondary}`}>{t('sponsorMessage')}</label>
+                                <textarea
+                                  value={sponsor.message || ''}
+                                  onChange={(e) => handleInputChange(`sponsors.list.${index}.message`, e.target.value)}
+                                  rows={2}
+                                  className={`w-full px-3 py-2 rounded-lg border ${colors.input} text-sm`}
+                                  placeholder={t('sponsorMessagePlaceholder')}
                                 />
                               </div>
                             </div>
@@ -2187,7 +2382,7 @@ export default function ConfigPage() {
                 id="music"
                 className={`rounded-xl sm:rounded-2xl p-4 sm:p-6 ${colors.card} backdrop-blur-md scroll-mt-4 overflow-hidden`}
               >
-                {renderSectionHeader(sections[9])}
+                {renderSectionHeader(sections[10])}
                 {sections[9].expanded && (
                   <div className="mt-6 space-y-4">
                     <p className={`text-sm ${colors.textSecondary}`}>{t('musicUploadHint')}</p>

@@ -7,7 +7,7 @@
 "use client";
 
 import ThemeSwitcher from "./ThemeSwitcher";
-import LanguageSwitcher from "./LanguageSwitcher";
+// import LanguageSwitcher from "./LanguageSwitcher";
 import ThemeTransition from "../effects/ThemeTransition";
 import EffectsToggleButton from "./EffectsToggleButton";
 import { useSiteConfig } from "@/app/hooks/useSiteConfig";
@@ -39,7 +39,7 @@ export default function TopToolbar({ className = "" }: TopToolbarProps) {
             <EffectsToggleButton />
           </div>
         )}
-        <LanguageSwitcher />
+        {/* <LanguageSwitcher /> */}
         <ThemeSwitcher />
       </div>
     </>

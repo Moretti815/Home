@@ -1,6 +1,6 @@
 /**
  * 留言簿页面
- * 使用 Waline 评论系统实现留言功能
+ * 使用 Giscus 评论系统实现留言功能
  * 支持响应式布局和主题切换
  */
 /* eslint-disable react-hooks/set-state-in-effect */
@@ -20,8 +20,7 @@ import SEOHead from "../components/seo/SEOHead";
 import ParticleBackground from "../components/effects/ParticleBackground";
 import DynamicLines from "../components/effects/DynamicLines";
 import TopToolbar from "../components/ui/TopToolbar";
-import WalineComments from "../components/waline/WalineComments.jsx";
-import "../css/waline.css";
+import GiscusComments from "../components/giscus/GiscusComments";
 
 // 容器动画配置
 const containerVariants = {
@@ -29,7 +28,7 @@ const containerVariants = {
   visible: {
     opacity: 1,
     transition: {
-      staggerChildren: 0.1,  // 子元素交错出现
+      staggerChildren: 0.1,
     },
   },
 };
@@ -79,8 +78,6 @@ export default function GuestbookPage() {
     setMounted(true);
   }, [hydrate]);
 
-  // Waline 配置
-  const walineUrl = guestbookConfig?.walineUrl || "";
   const pageTitle = guestbookConfig?.title?.[language] || t("guestbook");
 
   return (
@@ -119,7 +116,7 @@ export default function GuestbookPage() {
           </div>
         )}
 
-        <div className="max-w-4xl mx-auto px-4 py-8 relative z-10">
+        <div className="max-w-5xl mx-auto px-4 sm:px-6 py-8 relative z-10">
           <motion.header 
             className="mb-8" 
             variants={effectsEnabled ? itemVariants : undefined}
@@ -170,31 +167,21 @@ export default function GuestbookPage() {
             </div>
           </motion.header>
 
+          {/* Giscus 评论区域 */}
           <motion.div 
             className={`${colors.card} rounded-2xl sm:rounded-3xl p-4 sm:p-6 lg:p-8 min-h-[500px] shadow-xl ${colors.glow}`}
             variants={effectsEnabled ? itemVariants : undefined}
             whileHover={effectsEnabled ? { boxShadow: theme === "dark" ? "0 25px 50px -12px rgba(236, 72, 153, 0.25)" : "0 25px 50px -12px rgba(236, 72, 153, 0.15)" } : undefined}
           >
-            {walineUrl ? (
-              <WalineComments path="/guestbook" />
-            ) : (
-              <div className="flex flex-col items-center justify-center h-[400px] text-center">
-                <motion.div 
-                  className="w-24 h-24 rounded-2xl bg-linear-to-br from-gray-400 to-gray-500 flex items-center justify-center mb-6 shadow-lg"
-                  whileHover={{ scale: 1.05, rotate: 5 }}
-                >
-                  <i className="fas fa-cog text-white text-4xl"></i>
-                </motion.div>
-                <h3 className={`text-2xl font-semibold ${colors.text} mb-3`}>
-                  {t('guestbookNotConfigured')}
-                </h3>
-                <p className={`${colors.textSecondary} max-w-md`}>
-                  {t('guestbookNotConfiguredDesc')}
-                </p>
-              </div>
-            )}
+            <GiscusComments
+              repo="Moretti815/Home"
+              repoId="R_kgDOSpV2uQ"
+              category="Announcements"
+              categoryId="DIC_kwDOSpV2uc4C-BWz"
+            />
           </motion.div>
 
+          {/* 提示信息 */}
           <motion.div 
             className={`mt-6 sm:mt-8 flex flex-row justify-center sm:grid sm:grid-cols-3 gap-3 sm:gap-4 ${colors.card} rounded-2xl p-4 sm:p-6 overflow-x-auto sm:overflow-visible`}
             variants={effectsEnabled ? itemVariants : undefined}

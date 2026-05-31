@@ -161,6 +161,8 @@
   "beFriendly": "Be Friendly",
   "beRespectful": "Be Respectful",
   "shareJoy": "Share Joy",
+  "moments": "Moments",
+  "momentsSubtitle": "Recording life moments ✨",
   "friendLinks": "Friend Links",
   "visitSite": "Visit Site",
   "noFriendLinks": "No friend links yet",
@@ -177,6 +179,8 @@
   "friendLinkName": "Website Name",
   "friendLinkAvatar": "Website Icon",
   "friendLinkDescription": "Website Description",
+  "friendLinkScreenshot": "Website Screenshot",
+  "friendLinkFeed": "RSS Feed",
   "fetchSiteInfo": "Fetch Site Info",
   "fetchingSiteInfo": "Fetching site info...",
   "fetchSiteInfoSuccess": "Site info fetched successfully",
@@ -201,5 +205,11 @@
   "walineMail": "Email",
   "walinePlaceholder": "Say something...",
   "walineNickPlaceholder": "Enter your nickname",
-  "walineMailPlaceholder": "Enter your email"
+  "walineMailPlaceholder": "Enter your email",
+  "guide": "Guide",
+  "reward": "Reward",
+  "viewMoments": "View Moments",
+  "viewAllMoments": "View All Moments",
+  "noMoments": "No Moments",
+  "loadFailed": "Load Failed"
 }

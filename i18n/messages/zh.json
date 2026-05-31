@@ -1,14 +1,14 @@
 {
-  "siteTitle": "Amis的主页",
+  "siteTitle": "Moretti的主页",
   "greetingMorning": "早上好",
   "greetingAfternoon": "下午好",
   "greetingEvening": "晚上好",
-  "typeWriterText": "用代码构建精彩世界",
-  "typeWriterText2": "热爱编程，追求极致，永不止步",
+  "typeWriterText": "人生如逆旅。我亦是行人",
+  "typeWriterText2": "每一段旅行，都有终点。",
   "quickLinks": "快速链接",
-  "footer": "© 2026 Amis的个人主页. All Rights Reserved.",
+  "footer": "© 2026 Moretti的个人主页. All Rights Reserved.",
   "nav": {
-    "blog": "Amis的博客",
+    "blog": "Moretti的博客",
     "github": "GitHub",
     "gitee": "Gitee"
   },
@@ -161,6 +161,8 @@
   "beFriendly": "友善交流",
   "beRespectful": "尊重他人",
   "shareJoy": "分享快乐",
+  "moments": "说说",
+  "momentsSubtitle": "记录生活的点滴 ✨",
   "friendLinks": "友链",
   "visitSite": "访问网站",
   "noFriendLinks": "暂无友链",
@@ -177,6 +179,8 @@
   "friendLinkName": "网站名称",
   "friendLinkAvatar": "网站图标",
   "friendLinkDescription": "网站描述",
+  "friendLinkScreenshot": "网站截图",
+  "friendLinkFeed": "RSS Feed",
   "fetchSiteInfo": "获取网站信息",
   "fetchingSiteInfo": "正在获取网站信息...",
   "fetchSiteInfoSuccess": "网站信息获取成功",
@@ -201,5 +205,11 @@
   "walineMail": "邮箱",
   "walinePlaceholder": "说点什么吧...",
   "walineNickPlaceholder": "请输入昵称",
-  "walineMailPlaceholder": "请输入邮箱"
+  "walineMailPlaceholder": "请输入邮箱",
+  "guide": "导航",
+  "reward": "赞助",
+  "viewMoments": "查看说说",
+  "viewAllMoments": "查看全部说说",
+  "noMoments": "暂无说说",
+  "loadFailed": "加载失败"
 }

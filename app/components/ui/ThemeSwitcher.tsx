@@ -20,7 +20,7 @@ export default function ThemeSwitcher() {
       className={`relative w-7 h-7 sm:w-10 sm:h-10 rounded-full transition-all duration-300 hover:scale-110 flex items-center justify-center overflow-hidden border ${
         theme === "dark" 
           ? "bg-white/10 hover:bg-white/20 border-white/20 hover:border-white/40" 
-          : "bg-white hover:bg-gray-100 border-gray-300 hover:border-gray-400"
+          : "bg-white/10 hover:bg-white/20 border-white/20 hover:border-white/40"
       } ${isTransitioning ? "opacity-50 cursor-not-allowed" : ""}`}
       title={theme === "dark" ? t("switchToLightMode") : t("switchToDarkMode")}
     >

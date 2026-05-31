@@ -1,26 +1,55 @@
 /**
  * 自定义光标组件
  * 支持两种模式：
- * 1. 自定义光标图片（.cur 文件）
+ * 1. 自定义光标图片（.cur 或 .png 文件）
  * 2. 光标跟随光晕效果
+ * 3. CSS 绘制的备选光标
  */
 "use client";
 
 import { useEffect, useState, useCallback } from "react";
 import { useThemeStore } from "../../stores/theme-store";
-import { useConfigStore } from "../../stores/config-store";
+import configData from "../../../config.json";
+
+// CSS 绘制的备选光标（红色圆点）
+const CSS_CURSOR = `data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 32 32"><circle cx="16" cy="16" r="10" fill="%23ff6b6b" stroke="white" stroke-width="2"/></svg>`;
 
 export default function CustomCursor() {
 	const { theme } = useThemeStore();
-	const { siteContent } = useConfigStore();
 	// 光标位置状态
 	const [position, setPosition] = useState({ x: 0, y: 0 });
 	// 光标可见性状态
 	const [isVisible, setIsVisible] = useState(false);
+	// 是否在客户端
+	const [isClient, setIsClient] = useState(false);
+	// 使用备选光标
+	const [useFallback, setUseFallback] = useState(false);
 
-	// 配置项
-	const showCustomCursor = siteContent?.showCustomCursor ?? false;
-	const customCursorPath = siteContent?.customCursorPath ?? "/cursors/watermelon.cur";
+	// 从 config.json 直接读取配置
+	const showCustomCursor = configData.showCustomCursor ?? false;
+	const customCursorPath = configData.customCursorPath ?? "/cursors/default.cur";
+
+	// 标记客户端渲染
+	useEffect(() => {
+		const timer = setTimeout(() => setIsClient(true), 0);
+		return () => clearTimeout(timer);
+	}, []);
+
+	// 尝试加载光标图片
+	useEffect(() => {
+		if (!isClient || !showCustomCursor) return;
+
+		const img = new Image();
+		img.onload = () => {
+			const timer = setTimeout(() => setUseFallback(false), 0);
+			return () => clearTimeout(timer);
+		};
+		img.onerror = () => {
+			const timer = setTimeout(() => setUseFallback(true), 0);
+			return () => clearTimeout(timer);
+		};
+		img.src = customCursorPath;
+	}, [isClient, showCustomCursor, customCursorPath]);
 
 	// 鼠标移动处理
 	const handleMouseMove = useCallback((e: MouseEvent) => {
@@ -30,30 +59,27 @@ export default function CustomCursor() {
 
 	// 自定义光标模式：注入 CSS 样式
 	useEffect(() => {
-		// 移动端不启用自定义光标
+		if (!isClient) return;
 		if (typeof window !== "undefined" && window.innerWidth < 768) return;
 		
-		if (showCustomCursor && customCursorPath) {
-			// 创建自定义光标样式
+		if (showCustomCursor) {
+			const cursorUrl = useFallback ? CSS_CURSOR : customCursorPath;
+			
+			// 先移除旧的样式
+			const existingStyle = document.getElementById("custom-cursor-style");
+			if (existingStyle) {
+				existingStyle.remove();
+			}
+			
 			const style = document.createElement("style");
 			style.id = "custom-cursor-style";
 			style.textContent = `
-				:root {
-					--custom-cursor: url('${customCursorPath}'), default;
-				}
-				html, body, div, span, p, h1, h2, h3, h4, h5, h6, 
-				section, article, main, header, footer, nav, aside,
-				ul, ol, li, dl, dt, dd, figure, figcaption,
-				table, thead, tbody, tfoot, tr, th, td,
-				form, fieldset, legend, label,
-				img, picture, video, audio, canvas, svg,
-				details, summary {
-					cursor: var(--custom-cursor);
+				html, body, * {
+					cursor: url('${cursorUrl}') 16 16, auto !important;
 				}
 			`;
 			document.head.appendChild(style);
 
-			// 清理函数：移除自定义样式
 			return () => {
 				const existingStyle = document.getElementById("custom-cursor-style");
 				if (existingStyle) {
@@ -61,14 +87,14 @@ export default function CustomCursor() {
 				}
 			};
 		}
-	}, [showCustomCursor, customCursorPath]);
+	}, [showCustomCursor, customCursorPath, isClient, useFallback]);
 
-	// 光晕跟随模式：监听鼠标移动
+	// 光晕跟随模式
 	useEffect(() => {
+		if (!isClient) return;
 		if (showCustomCursor) return;
 
 		const handleMouseLeave = () => setIsVisible(false);
-
 		window.addEventListener("mousemove", handleMouseMove);
 		document.addEventListener("mouseleave", handleMouseLeave);
 
@@ -76,35 +102,30 @@ export default function CustomCursor() {
 			window.removeEventListener("mousemove", handleMouseMove);
 			document.removeEventListener("mouseleave", handleMouseLeave);
 		};
-	}, [handleMouseMove, showCustomCursor]);
+	}, [handleMouseMove, showCustomCursor, isClient]);
 
-	// 移动端不渲染
-	if (typeof window !== "undefined" && window.innerWidth < 768) {
-		return null;
-	}
-
-	// 自定义光标模式：不渲染光晕
-	if (showCustomCursor) {
-		return null;
-	}
+	// 服务端渲染时返回一个占位，避免 hydration 不匹配
+	if (!isClient) return null;
+	
+	if (typeof window !== "undefined" && window.innerWidth < 768) return null;
+	
+	if (showCustomCursor) return null;
 
 	// 渲染光晕效果
 	return (
 		<div
-			className="pointer-events-none fixed z-99999 rounded-full"
+			className="pointer-events-none fixed z-[99999] rounded-full"
 			style={{
 				left: `${position.x}px`,
 				top: `${position.y}px`,
 				width: "400px",
 				height: "400px",
 				transform: "translate(-50%, -50%)",
+				background: theme === "dark" 
+					? "radial-gradient(circle, rgba(225,138,59,0.15) 0%, rgba(225,138,59,0.05) 40%, transparent 70%)"
+					: "radial-gradient(circle, rgba(128,164,146,0.15) 0%, rgba(128,164,146,0.05) 40%, transparent 70%)",
 				opacity: isVisible ? 1 : 0,
-				transition: "opacity 0.3s ease-out",
-				// 根据主题设置不同的光晕颜色
-				background:
-					theme === "dark"
-						? "radial-gradient(circle, rgba(59, 130, 246, 0.15) 0%, rgba(59, 130, 246, 0.05) 30%, transparent 70%)"
-						: "radial-gradient(circle, rgba(251, 146, 60, 0.12) 0%, rgba(251, 146, 60, 0.04) 30%, transparent 70%)",
+				transition: "opacity 0.3s ease",
 			}}
 		/>
 	);

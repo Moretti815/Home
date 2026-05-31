@@ -71,3 +71,183 @@ body {
   writing-mode: vertical-rl;
   text-orientation: mixed;
 }
+
+/* Friend Circle Lite 样式修复 */
+/* 修复卡片标题文字被遮挡的问题 */
+.fclite-card-title,
+#friend-circle-lite-root .fclite-card-title,
+#friend-circle-lite-root h3,
+#friend-circle-lite-root .fclite-article-title,
+#friend-circle-lite-root .fclite-title,
+#friend-circle-lite-root .card-title {
+  line-height: 1.5 !important;
+  overflow: visible !important;
+  white-space: normal !important;
+  display: -webkit-box !important;
+  -webkit-line-clamp: 3 !important;
+  -webkit-box-orient: vertical !important;
+  max-height: none !important;
+  height: auto !important;
+  padding-bottom: 2px !important;
+  margin-bottom: 8px !important;
+}
+
+/* 修复卡片内容区域 */
+#friend-circle-lite-root .fclite-card-content,
+#friend-circle-lite-root .fclite-article-content,
+#friend-circle-lite-root .fclite-content {
+  overflow: visible !important;
+  height: auto !important;
+  max-height: none !important;
+}
+
+/* 修复卡片整体高度 - 关键修复 */
+#friend-circle-lite-root .fclite-card,
+#friend-circle-lite-root .fclite-article-card,
+#friend-circle-lite-root .fclite-item,
+#friend-circle-lite-root .card {
+  height: auto !important;
+  min-height: 140px !important;
+  overflow: visible !important;
+}
+
+/* 修复文字截断问题 */
+#friend-circle-lite-root * {
+  text-overflow: clip !important;
+}
+
+/* 修复文章描述文字 */
+#friend-circle-lite-root .fclite-desc,
+#friend-circle-lite-root .fclite-description,
+#friend-circle-lite-root .fclite-article-desc {
+  line-height: 1.5 !important;
+  overflow: visible !important;
+  max-height: none !important;
+}
+
+/* 确保卡片容器有足够空间 */
+#friend-circle-lite-root {
+  overflow: visible !important;
+}
+
+/* 修复可能的 padding/margin 导致的截断 */
+#friend-circle-lite-root .fclite-card-body,
+#friend-circle-lite-root .fclite-body {
+  overflow: visible !important;
+  height: auto !important;
+}
+
+/* 友链卡片延迟状态标签样式 */
+.status-tag {
+  position: absolute;
+  top: 12px;
+  right: 12px;
+  padding: 6px 12px;
+  border-radius: 20px;
+  font-size: 12px;
+  color: white;
+  font-weight: 600;
+  transition: all 0.3s ease-out;
+  z-index: 20;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+}
+
+.status-tag::before {
+  content: '';
+  display: inline-block;
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background-color: currentColor;
+  opacity: 0.8;
+}
+
+.friend-card:hover .status-tag {
+  opacity: 0;
+  transform: translateY(-10px);
+}
+
+/* 固态颜色 */
+.status-tag-green {
+  background-color: #10B981;
+  /* 绿色 */
+}
+
+.status-tag-green::before {
+  background-color: #6EE7B7;
+}
+
+.status-tag-light-yellow {
+  background-color: #F59E0B;
+  color: white;
+  /* 黄色 */
+}
+
+.status-tag-light-yellow::before {
+  background-color: #FCD34D;
+}
+
+.status-tag-dark-yellow {
+  background-color: #D97706;
+  color: white;
+  /* 深黄色 */
+}
+
+.status-tag-dark-yellow::before {
+  background-color: #FBBF24;
+}
+
+.status-tag-red {
+  background-color: #EF4444;
+  /* 红色 */
+}
+
+.status-tag-red::before {
+  background-color: #FCA5A5;
+}
+
+/* 友链卡片 Tags 标签样式 - 左上角 */
+.friend-card-tags {
+  position: absolute;
+  top: 12px;
+  left: 12px;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  z-index: 20;
+}
+
+.friend-card-tag {
+  padding: 4px 10px;
+  border-radius: 12px;
+  font-size: 11px;
+  font-weight: 600;
+  color: white;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  box-shadow: 0 2px 8px rgba(102, 126, 234, 0.4);
+  transition: all 0.3s ease-out;
+}
+
+.friend-card:hover .friend-card-tag {
+  opacity: 0;
+  transform: translateY(-10px);
+}
+
+/* 不同标签颜色 */
+.friend-card-tag[data-tag="推荐"] {
+  background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+  box-shadow: 0 2px 8px rgba(245, 87, 108, 0.4);
+}
+
+.friend-card-tag[data-tag="热门"] {
+  background: linear-gradient(135deg, #fa709a 0%, #fee140 100%);
+  box-shadow: 0 2px 8px rgba(250, 112, 154, 0.4);
+}
+
+.friend-card-tag[data-tag="精选"] {
+  background: linear-gradient(135deg, #30cfd0 0%, #330867 100%);
+  box-shadow: 0 2px 8px rgba(48, 207, 208, 0.4);
+}

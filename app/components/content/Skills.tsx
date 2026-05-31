@@ -14,11 +14,18 @@ import { getThemeColors } from "../../themeConfig";
 import { useScrollAnimation } from "../../hooks/useScrollAnimation";
 import { useConfigStore } from "../../stores/config-store";
 
+// 主题色配置
+const THEME_COLORS = {
+  dark: "#E18A3B",
+  light: "#80A492",
+};
+
 export default function Skills() {
   const { t } = useTranslation();
   const { theme } = useThemeStore();
   const colors = getThemeColors(theme);
   const { siteContent } = useConfigStore();
+  const primaryColor = theme === "dark" ? THEME_COLORS.dark : THEME_COLORS.light;
   // 动画进度值
   const [animatedLevels, setAnimatedLevels] = useState<Record<string, number>>({});
 
@@ -27,9 +34,9 @@ export default function Skills() {
 
   // 进度条动画：可见时启动
   useEffect(() => {
-    if (isVisible) {
+    if (isVisible && skillsConfig) {
       skillsConfig.forEach((skill) => {
-        let start = 0;
+        const start = 0;
         const end = skill.level;
         const duration = 1500;  // 动画持续时间
         const startTime = performance.now();
@@ -69,25 +76,30 @@ export default function Skills() {
           isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10'
         }`}
       >
-        <div className={`absolute -inset-1 rounded-2xl blur-lg opacity-50 group-hover:opacity-75 transition duration-500 ${
-          theme === "dark"
-            ? "bg-linear-to-r from-emerald-500/30 via-teal-500/30 to-cyan-500/30"
-            : "bg-linear-to-r from-amber-400/20 via-orange-400/20 to-yellow-400/20"
-        }`}></div>
+        <div 
+          className="absolute -inset-1 rounded-2xl blur-lg opacity-50 group-hover:opacity-75 transition duration-500"
+          style={{ backgroundColor: `${primaryColor}30` }}
+        ></div>
         <div className={`relative ${colors.cardBackground}/80 backdrop-blur-md rounded-2xl p-6 shadow-xl border ${colors.border} hover:${colors.borderHover} transition-all duration-300`}>
           <h3 className={`text-lg font-semibold mb-6 flex items-center gap-2 ${colors.text}`}>
-            <span className="w-8 h-8 rounded-lg bg-linear-to-br from-emerald-400 to-cyan-600 flex items-center justify-center">
+            <span 
+              className="w-8 h-8 rounded-lg flex items-center justify-center"
+              style={{ backgroundColor: primaryColor }}
+            >
               <i className="fas fa-chart-line text-white text-sm"></i>
             </span>
             {t("skills")}
           </h3>
 
           <div className="space-y-4">
-            {skillsConfig.map((skill, index) => (
+            {(skillsConfig || []).map((skill, index) => (
               <div key={skill.name} className="group/skill">
                 <div className="flex items-center justify-between mb-2">
                   <div className="flex items-center gap-3">
-                    <span className={`w-8 h-8 rounded-lg bg-linear-to-br ${skill.color} flex items-center justify-center`}>
+                    <span 
+                      className="w-8 h-8 rounded-lg flex items-center justify-center"
+                      style={{ backgroundColor: primaryColor }}
+                    >
                       <i className={`${skill.icon} text-white text-xs`}></i>
                     </span>
                     <span className={`font-medium ${colors.text}`}>{skill.name}</span>
@@ -102,9 +114,10 @@ export default function Skills() {
                     : "bg-gray-200 border border-gray-100"
                 }`}>
                   <div
-                    className={`h-full bg-linear-to-r ${skill.color} rounded-full transition-all duration-1000 ease-out group-hover/skill:brightness-110`}
+                    className="h-full rounded-full transition-all duration-1000 ease-out group-hover/skill:brightness-110"
                     style={{ 
                       width: `${animatedLevels[skill.name] || 0}%`,
+                      backgroundColor: primaryColor,
                       transitionDelay: `${index * 100}ms`
                     }}
                   ></div>

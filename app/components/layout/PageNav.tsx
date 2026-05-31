@@ -29,8 +29,10 @@ interface PageNavProps {
 
 // 默认的额外页面链接
 const defaultLinks: NavLink[] = [
-  { href: "/friends", labelKey: "friendLinks", icon: "fas fa-user-friends" },
-  { href: "/guestbook", labelKey: "guestbook", icon: "fas fa-comments" },
+    { href: "/guide", labelKey: "guide", icon: "fas fa-compass" },
+    { href: "/moments", labelKey: "moments", icon: "fas fa-camera" },
+    { href: "/guestbook", labelKey: "guestbook", icon: "fas fa-book" },
+    { href: "/reward", labelKey: "reward", icon: "fas fa-heart" }
 ];
 
 export default function PageNav({ cardClass, textClass, hoverClass = "", links = defaultLinks }: PageNavProps) {
