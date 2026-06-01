@@ -1,7 +1,7 @@
 {
-  "name": "Amis's Homepage",
-  "short_name": "Amis",
-  "description": "后端开发者 | 移动端开发者。专注于 Java Spring Boot、Flutter 和 Next.js 开发。",
+  "name": "Moretti's Homepage",
+  "short_name": "Moretti",
+  "description": "博客写作者 | 资源分享者 | 博客魔改者",
   "start_url": "/",
   "display": "standalone",
   "background_color": "#0a0a0a",

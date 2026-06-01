@@ -23,6 +23,14 @@ export default function SocialIcon({ href, icon, title, show = true, theme, text
 
   if (!show) return null;
 
+  // 判断是否为图片URL（以 http://、https://、/ 开头，或包含图片扩展名）
+  const isImageUrl = icon && (
+    icon.startsWith('http://') ||
+    icon.startsWith('https://') ||
+    icon.startsWith('/') ||
+    /\.(png|jpg|jpeg|gif|svg|webp|ico)$/i.test(icon)
+  );
+
   const handleClick = (e: React.MouseEvent<HTMLAnchorElement>) => {
     const rect = e.currentTarget.getBoundingClientRect();
     const x = e.clientX - rect.left;
@@ -47,7 +55,7 @@ export default function SocialIcon({ href, icon, title, show = true, theme, text
       onMouseLeave={() => setIsHovered(false)}
       className="relative w-10 h-10 flex items-center justify-center rounded-full transition-all duration-300 overflow-hidden group"
       style={{
-        backgroundColor: theme === "dark" ? "rgba(255,255,255,0.2)" : "rgba(229,231,235,1)",
+        backgroundColor: theme === "dark" ? "rgba(255,255,255,0.2)" : "transparent",
         color: textColor,
       }}
     >
@@ -77,7 +85,15 @@ export default function SocialIcon({ href, icon, title, show = true, theme, text
         />
       ))}
 
-      <i className={`${icon} relative z-10 transition-transform duration-300 group-hover:scale-110`}></i>
+      {isImageUrl ? (
+        <img
+          src={icon}
+          alt={title}
+          className="relative z-10 w-5 h-5 object-contain transition-transform duration-300 group-hover:scale-110"
+        />
+      ) : (
+        <i className={`${icon} relative z-10 transition-transform duration-300 group-hover:scale-110`}></i>
+      )}
 
       <style jsx>{`
         @keyframes ripple {

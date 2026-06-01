@@ -144,6 +144,30 @@
         "en": "Email"
       },
       "icon": "fas fa-envelope"
+    },
+    "telegram": {
+      "url": "https://s.200815.xyz/telegram",
+      "title": {
+        "zh": "电报",
+        "en": "Email"
+      },
+      "icon": "fab fa-telegram"
+    },
+    "jike": {
+      "url": "https://s.200815.xyz/jike",
+      "title": {
+        "zh": "即刻",
+        "en": "Email"
+      },
+      "icon": "https://everywhere-cloud.oss-cn-shanghai.aliyuncs.com/chat/1780319760/4gTp2Nxd.png"
+    },
+    "qq": {
+      "url": "https://s.200815.xyz/qq",
+      "title": {
+        "zh": "QQ",
+        "en": "Email"
+      },
+      "icon": "fab fa-qq"
     }
   },
   "projects": {
@@ -156,9 +180,48 @@
           "en": "Project description in English"
         },
         "url": "https://github.com/Moretti815/Home",
-        "image": "/images/project.jpg",
+        "image": "https://img.wkds.eu.org/link/EXPYnvuo",
         "tags": ["主页", "github"],
         "icon": "far fa-house",
+        "gradient": "from-blue-500 to-purple-600"
+      },
+      {
+        "id": "blog",
+        "name": "博客",
+        "description": {
+          "zh": "基于Github action和Github issues的开源项目魔改自用",
+          "en": "Project description in English"
+        },
+        "url": "https://github.com/Moretti815/Gmeek",
+        "image": "https://img.wkds.eu.org/link/RGWHDXrt",
+        "tags": ["博客", "github"],
+        "icon": "far fa-house",
+        "gradient": "from-blue-500 to-purple-600"
+      },
+      {
+        "id": "shortlink",
+        "name": "短链服务",
+        "description": {
+          "zh": "基于Cloudflare Pages的短链服务",
+          "en": "Project description in English"
+        },
+        "url": "https://github.com/Moretti815/shortlink",
+        "image": "https://ocs.celine.cn/livechat/uploadfile/celine/20260601/54DB5664BC955D7E1B899B77D7C1E069.png",
+        "tags": ["短链", "Cloudflare"] ,
+        "icon": "fas fa-link",
+        "gradient": "from-blue-500 to-purple-600"
+      },
+      {
+        "id": "Gallery",
+        "name": "画廊",
+        "description": {
+          "zh": "基于Github Pages的画廊",
+          "en": "Project description in English"
+        },
+        "url": "https://github.com/Moretti815/gallery",
+        "image": "https://file.icve.com.cn/file_doc/kNz6u6no/8f3DwgOu.png",
+        "tags": ["短链", "Github"] ,
+        "icon": "fas fa-image",
         "gradient": "from-blue-500 to-purple-600"
       }
     ],

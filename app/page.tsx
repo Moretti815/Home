@@ -448,38 +448,17 @@ export default function Home() {
           </div>
           
           <div id="site_social_icons" className="flex items-center gap-4 flex-wrap justify-center">
-            <SocialIcon
-              href={linksConfig.email?.url || "#"}
-              icon="fas fa-envelope"
-              title={linksConfig.email?.title[useLanguageStore.getState().language] || ""}
-              show={linksConfig.email?.show !== false}
-              theme={theme}
-              textColor={textColor}
-            />
-            <SocialIcon
-              href={linksConfig.github?.url || "#"}
-              icon="fab fa-github"
-              title={linksConfig.github?.title[useLanguageStore.getState().language] || ""}
-              show={linksConfig.github?.show !== false}
-              theme={theme}
-              textColor={textColor}
-            />
-            <SocialIcon
-              href={linksConfig.gitee?.url || "#"}
-              icon="fab fa-gitee"
-              title={linksConfig.gitee?.title[useLanguageStore.getState().language] || ""}
-              show={linksConfig.gitee?.show !== false}
-              theme={theme}
-              textColor={textColor}
-            />
-            <SocialIcon
-              href={linksConfig.blog?.url || "#"}
-              icon="fas fa-blog"
-              title={linksConfig.blog?.title[useLanguageStore.getState().language] || ""}
-              show={linksConfig.blog?.show !== false}
-              theme={theme}
-              textColor={textColor}
-            />
+            {Object.entries(linksConfig).map(([key, link]) => (
+              <SocialIcon
+                key={key}
+                href={link?.url || "#"}
+                icon={link?.icon || "fas fa-link"}
+                title={link?.title?.[useLanguageStore.getState().language] || ""}
+                show={link?.show !== false}
+                theme={theme}
+                textColor={textColor}
+              />
+            ))}
           </div>
         </div>
         

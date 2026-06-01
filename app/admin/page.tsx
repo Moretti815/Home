@@ -581,7 +581,8 @@ export default function ConfigPage() {
         name: '',
         message: '',
         amount: '¥',
-        date: new Date().toISOString().split('T')[0]
+        date: new Date().toISOString().split('T')[0],
+        avatar: ''
       };
       newConfig.sponsors.list = [...newConfig.sponsors.list, newSponsor];
       return { ...prev, config: newConfig };
@@ -2356,6 +2357,16 @@ export default function ConfigPage() {
                                   value={sponsor.date || ''}
                                   onChange={(e) => handleInputChange(`sponsors.list.${index}.date`, e.target.value)}
                                   className={`w-full px-3 py-2 rounded-lg border ${colors.input} text-sm`}
+                                />
+                              </div>
+                              <div>
+                                <label className={`block text-xs font-medium mb-1 ${colors.textSecondary}`}>{t('sponsorAvatar')}</label>
+                                <input
+                                  type="text"
+                                  value={sponsor.avatar || ''}
+                                  onChange={(e) => handleInputChange(`sponsors.list.${index}.avatar`, e.target.value)}
+                                  className={`w-full px-3 py-2 rounded-lg border ${colors.input} text-sm`}
+                                  placeholder={t('sponsorAvatarPlaceholder')}
                                 />
                               </div>
                               <div className="md:col-span-2">

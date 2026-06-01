@@ -148,6 +148,13 @@ export default function MomentsTicker() {
 		}
 	};
 
+	// 解码 HTML 实体
+	const decodeHtmlEntities = (text: string): string => {
+		const textarea = document.createElement('textarea');
+		textarea.innerHTML = text;
+		return textarea.value;
+	};
+
 	// 复制数据用于无缝循环
 	const displayMoments = moments.length > 0 ? [...moments, ...moments] : moments;
 
@@ -185,8 +192,8 @@ export default function MomentsTicker() {
 									onClick={() => router.push("/moments")}
 								>
 									<span className={`text-sm truncate flex-1 ${colors.text}`}>
-										{moment.content}
-									</span>
+									{decodeHtmlEntities(moment.content)}
+								</span>
 									{moment.type && moment.type !== "text" && (
 										<i className={`fas ${getTypeIcon(moment.type)} text-xs ${colors.icon}`} />
 									)}
