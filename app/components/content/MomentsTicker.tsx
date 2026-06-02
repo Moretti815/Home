@@ -155,6 +155,19 @@ export default function MomentsTicker() {
 		return textarea.value;
 	};
 
+	// 清理 HTML 标签，将图片替换为 [图片]
+	const cleanHtmlContent = (text: string): string => {
+		// 先解码 HTML 实体
+		let decoded = decodeHtmlEntities(text);
+		// 将 <img> 标签替换为 [图片]
+		decoded = decoded.replace(/<img[^>]*>/gi, ' [图片] ');
+		// 移除其他 HTML 标签
+		decoded = decoded.replace(/<[^>]*>/g, '');
+		// 合并多个空格
+		decoded = decoded.replace(/\s+/g, ' ').trim();
+		return decoded;
+	};
+
 	// 复制数据用于无缝循环
 	const displayMoments = moments.length > 0 ? [...moments, ...moments] : moments;
 
@@ -192,7 +205,7 @@ export default function MomentsTicker() {
 									onClick={() => router.push("/moments")}
 								>
 									<span className={`text-sm truncate flex-1 ${colors.text}`}>
-									{decodeHtmlEntities(moment.content)}
+									{cleanHtmlContent(moment.content)}
 								</span>
 									{moment.type && moment.type !== "text" && (
 										<i className={`fas ${getTypeIcon(moment.type)} text-xs ${colors.icon}`} />
