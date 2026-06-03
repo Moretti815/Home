@@ -330,8 +330,8 @@ export default function MomentsPage() {
       />
       <motion.div
         className={`min-h-screen ${colors.background} relative overflow-hidden`}
-        initial={effectsEnabled ? "hidden" : false}
-        animate={effectsEnabled ? "visible" : false}
+        initial={effectsEnabled ? "hidden" : "visible"}
+        animate="visible"
         variants={effectsEnabled ? containerVariants : undefined}
       >
         <TopToolbar />
@@ -365,7 +365,7 @@ export default function MomentsPage() {
             {/* 渐变横幅 */}
             <motion.div
               className={`${colors.card} rounded-2xl overflow-hidden mb-6`}
-              initial={effectsEnabled ? { opacity: 0, y: 20 } : false}
+              initial={effectsEnabled ? { opacity: 0, y: 20 } : { opacity: 1, y: 0 }}
               animate={{ opacity: 1, y: 0 }}
               transition={effectsEnabled ? { delay: 0.1 } : { duration: 0 }}
             >
@@ -409,7 +409,7 @@ export default function MomentsPage() {
             {/* Tab 切换 */}
             <motion.div
               className="flex justify-center"
-              initial={effectsEnabled ? { opacity: 0, y: 10 } : false}
+              initial={effectsEnabled ? { opacity: 0, y: 10 } : { opacity: 1, y: 0 }}
               animate={{ opacity: 1, y: 0 }}
               transition={effectsEnabled ? { delay: 0.15 } : { duration: 0 }}
             >
@@ -426,7 +426,7 @@ export default function MomentsPage() {
           {/* 内容区域 */}
           <motion.div
             className={`${colors.card} rounded-2xl sm:rounded-3xl p-4 sm:p-6 shadow-xl ${colors.glow}`}
-            initial={effectsEnabled ? { opacity: 0, y: 20 } : false}
+            initial={effectsEnabled ? { opacity: 0, y: 20 } : { opacity: 1, y: 0 }}
             animate={{ opacity: 1, y: 0 }}
             transition={effectsEnabled ? { delay: 0.2 } : { duration: 0 }}
           >
@@ -526,7 +526,7 @@ export default function MomentsPage() {
           {/* 底部提示 */}
           <motion.div
             className={`mt-6 text-center text-sm ${colors.textSecondary}`}
-            initial={effectsEnabled ? { opacity: 0 } : false}
+            initial={effectsEnabled ? { opacity: 0 } : { opacity: 1 }}
             animate={{ opacity: 1 }}
             transition={effectsEnabled ? { delay: 0.4 } : { duration: 0 }}
           >
@@ -544,6 +544,13 @@ export default function MomentsPage() {
       {/* 全局样式 */}
       <style jsx global>{`
         .moment-card, .memo-card, .tgtalk-card {
+          opacity: 1;
+        }
+
+        /* 仅在启用动画效果时使用 CSS 动画 */
+        .effects-enabled .moment-card,
+        .effects-enabled .memo-card,
+        .effects-enabled .tgtalk-card {
           animation: fadeInUp 0.5s ease-out forwards;
           opacity: 0;
         }
