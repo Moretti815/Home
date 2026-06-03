@@ -77,8 +77,8 @@ export default function MomentCard({
     <>
       <motion.div
         variants={effectsEnabled ? cardVariants : undefined}
-        initial={effectsEnabled ? "hidden" : false}
-        animate={effectsEnabled ? "visible" : false}
+        initial={effectsEnabled ? "hidden" : "visible"}
+        animate="visible"
         className={`moment-card group relative rounded-xl overflow-hidden transition-all duration-300 hover:shadow-xl hover:-translate-y-1 ${
           isDark
             ? "bg-[#141824] border border-white/10 hover:border-white/20"
