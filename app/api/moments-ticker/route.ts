@@ -7,6 +7,7 @@ import { NextResponse } from "next/server";
 const MEMOS_API_URL = "https://m.314926.xyz/api/v1/memos";
 const RSS_URL = "https://rsshub.261770.xyz/jike/user/07152f0c-0f65-4501-855b-031f3e20e4a5";
 const TGTALK_API_URL = "https://tgtalk.kemiaosw.top/";
+const MASTODON_API_URL = "https://mastodon-api.20050815.xyz/";
 
 interface MomentItem {
     id: string;
@@ -183,6 +184,41 @@ async function fetchTGTalk(): Promise<MomentItem[]> {
     }
 }
 
+// 获取 Mastodon 数据
+async function fetchMastodon(): Promise<MomentItem[]> {
+    try {
+        const response = await fetch(MASTODON_API_URL, {
+            headers: {
+                "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36",
+                "Accept": "application/json",
+            },
+        });
+
+        if (!response.ok) {
+            throw new Error(`Mastodon API error: ${response.status}`);
+        }
+
+        const data = await response.json();
+        const items: MomentItem[] = [];
+
+        if (data && Array.isArray(data.data)) {
+            data.data.forEach((item: { id?: string; text?: string; time?: number; image?: string[] }, index: number) => {
+                items.push({
+                    id: item.id || `mastodon-${index}`,
+                    content: stripHtml(item.text || ""),
+                    date: item.time ? formatDate(new Date(item.time).toISOString()) : "",
+                    type: item.image && item.image.length > 0 ? "image" : "text",
+                });
+            });
+        }
+
+        return items;
+    } catch (error) {
+        console.error("[Moments Ticker] Mastodon fetch error:", error);
+        return [];
+    }
+}
+
 export async function GET(request: Request) {
     try {
         const { searchParams } = new URL(request.url);
@@ -202,6 +238,9 @@ export async function GET(request: Request) {
                 break;
             case "tgtalk":
                 items = await fetchTGTalk();
+                break;
+            case "mastodon":
+                items = await fetchMastodon();
                 break;
             default:
                 return NextResponse.json(

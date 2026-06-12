@@ -28,18 +28,37 @@ import { getAllTags as getAllTGTalkTags, filterItemsByTag as filterTGTalkByTag }
 import type { Moment } from "../types/moment";
 import type { Memo, FilterTab } from "../types/memo";
 import type { TGTalkItem } from "../types/tgtalk";
+import configData from "../../config.json";
 
 // API 地址
 const RSS_URL = "/api/moments";
 const MEMOS_API_URL = "/api/memos";
 const TGTALK_API_URL = "/api/tgtalk";
+const MASTODON_API_URL = "/api/mastodon";
 
 // Tab 配置
-const tabs = [
+const allTabs = [
   { value: "moments", label: "说说", icon: "fas fa-comment-dots" },
   { value: "memos", label: "Memos", icon: "fas fa-sticky-note" },
   { value: "tgtalk", label: "TGTalk", icon: "fab fa-telegram" },
+  { value: "mastodon", label: "Mastodon", icon: "fab fa-mastodon" },
 ];
+
+// 从配置读取启用的 Tab
+const getEnabledTabs = () => {
+  const enabledTabs = configData.momentsPage?.enabledTabs || ["moments", "memos", "tgtalk", "mastodon"];
+  return allTabs.filter(tab => enabledTabs.includes(tab.value));
+};
+
+// 获取默认 Tab
+const getDefaultTab = () => {
+  const enabledTabs = configData.momentsPage?.enabledTabs || ["moments", "memos", "tgtalk", "mastodon"];
+  const defaultTab = configData.momentsPage?.defaultTab;
+  if (defaultTab && enabledTabs.includes(defaultTab)) {
+    return defaultTab;
+  }
+  return enabledTabs[0] || "moments";
+};
 
 // 容器动画配置
 const containerVariants = {
@@ -78,8 +97,11 @@ export default function MomentsPage() {
   const colors = usePageColors({ glowColor: 'purple' });
   const [mounted, setMounted] = useState(false);
   
+  // 获取启用的 Tab 列表
+  const tabs = useMemo(() => getEnabledTabs(), []);
+  
   // Tab 状态
-  const [activeTab, setActiveTab] = useState("moments");
+  const [activeTab, setActiveTab] = useState(getDefaultTab());
   
   // 说说数据
   const [moments, setMoments] = useState<Moment[]>([]);
@@ -97,15 +119,36 @@ export default function MomentsPage() {
   const [tgtalkLoading, setTGTalkLoading] = useState(true);
   const [tgtalkError, setTGTalkError] = useState<string | null>(null);
   const [tgtalkActiveTag, setTGTalkActiveTag] = useState("all");
+  
+  // Mastodon 数据
+  const [mastodonItems, setMastodonItems] = useState<TGTalkItem[]>([]);
+  const [mastodonLoading, setMastodonLoading] = useState(true);
+  const [mastodonError, setMastodonError] = useState<string | null>(null);
+  const [mastodonActiveTag, setMastodonActiveTag] = useState("all");
 
   useEffect(() => {
     hydrate();
     setMounted(true);
   }, [hydrate]);
 
+  // 确保当前 Tab 在启用列表中
+  useEffect(() => {
+    const enabledTabs = configData.momentsPage?.enabledTabs || ["moments", "memos", "tgtalk", "mastodon"];
+    if (!enabledTabs.includes(activeTab)) {
+      setActiveTab(enabledTabs[0] || "moments");
+    }
+  }, [activeTab]);
+
   // 获取说说数据
   useEffect(() => {
     if (!mounted) return;
+    
+    // 检查是否启用了说说 Tab
+    const enabledTabs = configData.momentsPage?.enabledTabs || ["moments", "memos", "tgtalk", "mastodon"];
+    if (!enabledTabs.includes("moments")) {
+      setMomentsLoading(false);
+      return;
+    }
 
     const fetchMoments = async () => {
       try {
@@ -133,6 +176,13 @@ export default function MomentsPage() {
   // 获取 Memos 数据
   useEffect(() => {
     if (!mounted) return;
+    
+    // 检查是否启用了 Memos Tab
+    const enabledTabs = configData.momentsPage?.enabledTabs || ["moments", "memos", "tgtalk", "mastodon"];
+    if (!enabledTabs.includes("memos")) {
+      setMemosLoading(false);
+      return;
+    }
 
     const fetchMemos = async () => {
       try {
@@ -163,6 +213,13 @@ export default function MomentsPage() {
   // 获取 TGTalk 数据
   useEffect(() => {
     if (!mounted) return;
+    
+    // 检查是否启用了 TGTalk Tab
+    const enabledTabs = configData.momentsPage?.enabledTabs || ["moments", "memos", "tgtalk", "mastodon"];
+    if (!enabledTabs.includes("tgtalk")) {
+      setTGTalkLoading(false);
+      return;
+    }
 
     const fetchTGTalk = async () => {
       try {
@@ -183,6 +240,39 @@ export default function MomentsPage() {
 
     fetchTGTalk();
     const interval = setInterval(fetchTGTalk, 60000);
+    return () => clearInterval(interval);
+  }, [mounted]);
+
+  // 获取 Mastodon 数据
+  useEffect(() => {
+    if (!mounted) return;
+    
+    // 检查是否启用了 Mastodon Tab
+    const enabledTabs = configData.momentsPage?.enabledTabs || ["moments", "memos", "tgtalk", "mastodon"];
+    if (!enabledTabs.includes("mastodon")) {
+      setMastodonLoading(false);
+      return;
+    }
+
+    const fetchMastodon = async () => {
+      try {
+        setMastodonLoading(true);
+        const response = await fetch(MASTODON_API_URL);
+        if (!response.ok) {
+          throw new Error(`HTTP ${response.status}`);
+        }
+        const data = await response.json();
+        const items = (data.data || []).sort((a: TGTalkItem, b: TGTalkItem) => b.time - a.time);
+        setMastodonItems(items);
+      } catch (err) {
+        setMastodonError(err instanceof Error ? err.message : "获取数据失败");
+      } finally {
+        setMastodonLoading(false);
+      }
+    };
+
+    fetchMastodon();
+    const interval = setInterval(fetchMastodon, 60000);
     return () => clearInterval(interval);
   }, [mounted]);
 
@@ -219,6 +309,24 @@ export default function MomentsPage() {
     return tabs;
   }, [tgtalkTags, tgtalkItems, language]);
 
+  // Mastodon 标签筛选
+  const mastodonTags = useMemo(() => getAllTGTalkTags(mastodonItems), [mastodonItems]);
+  const filteredMastodonItems = useMemo(() => filterTGTalkByTag(mastodonItems, mastodonActiveTag), [mastodonItems, mastodonActiveTag]);
+
+  const mastodonFilterTabs: FilterTab[] = useMemo(() => {
+    const tabs: FilterTab[] = [
+      { value: "all", label: language === "zh" ? "全部" : "All", icon: "fas fa-th-large", count: mastodonItems.length },
+    ];
+    mastodonTags.forEach((tag) => {
+      const count = mastodonItems.filter((item) => {
+        const tags = getAllTGTalkTags([item]);
+        return tags.includes(tag);
+      }).length;
+      tabs.push({ value: tag, label: tag, count });
+    });
+    return tabs;
+  }, [mastodonTags, mastodonItems, language]);
+
   const pageTitle = language === "zh" ? "动态" : "Moments";
   const pageSubtitle = language === "zh" ? "记录生活的点滴" : "Life moments";
 
@@ -228,32 +336,35 @@ export default function MomentsPage() {
       case "moments": return moments.length;
       case "memos": return filteredMemos.length;
       case "tgtalk": return filteredTGTalkItems.length;
+      case "mastodon": return filteredMastodonItems.length;
       default: return 0;
     }
-  }, [activeTab, moments, filteredMemos, filteredTGTalkItems]);
+  }, [activeTab, moments, filteredMemos, filteredTGTalkItems, filteredMastodonItems]);
 
   const currentLoading = useMemo(() => {
     switch (activeTab) {
       case "moments": return momentsLoading;
       case "memos": return memosLoading;
       case "tgtalk": return tgtalkLoading;
+      case "mastodon": return mastodonLoading;
       default: return false;
     }
-  }, [activeTab, momentsLoading, memosLoading, tgtalkLoading]);
+  }, [activeTab, momentsLoading, memosLoading, tgtalkLoading, mastodonLoading]);
 
   const currentError = useMemo(() => {
     switch (activeTab) {
       case "moments": return momentsError;
       case "memos": return memosError;
       case "tgtalk": return tgtalkError;
+      case "mastodon": return mastodonError;
       default: return null;
     }
-  }, [activeTab, momentsError, memosError, tgtalkError]);
+  }, [activeTab, momentsError, memosError, tgtalkError, mastodonError]);
 
   // 当前筛选标签
-  const currentFilterTabs = activeTab === "memos" ? memoFilterTabs : tgtalkFilterTabs;
-  const currentActiveTag = activeTab === "memos" ? memoActiveTag : tgtalkActiveTag;
-  const setCurrentActiveTag = activeTab === "memos" ? setMemoActiveTag : setTGTalkActiveTag;
+  const currentFilterTabs = activeTab === "memos" ? memoFilterTabs : activeTab === "mastodon" ? mastodonFilterTabs : tgtalkFilterTabs;
+  const currentActiveTag = activeTab === "memos" ? memoActiveTag : activeTab === "mastodon" ? mastodonActiveTag : tgtalkActiveTag;
+  const setCurrentActiveTag = activeTab === "memos" ? setMemoActiveTag : activeTab === "mastodon" ? setMastodonActiveTag : setTGTalkActiveTag;
 
   // 刷新数据
   const handleRefresh = async () => {
@@ -314,6 +425,23 @@ export default function MomentsPage() {
           setTGTalkError(err instanceof Error ? err.message : "获取数据失败");
         } finally {
           setTGTalkLoading(false);
+        }
+        break;
+      case "mastodon":
+        setMastodonLoading(true);
+        setMastodonError(null);
+        try {
+          const response = await fetch(`${MASTODON_API_URL}?t=${Date.now()}`);
+          if (!response.ok) {
+            throw new Error(`HTTP ${response.status}`);
+          }
+          const data = await response.json();
+          const items = (data.data || []).sort((a: TGTalkItem, b: TGTalkItem) => b.time - a.time);
+          setMastodonItems(items);
+        } catch (err) {
+          setMastodonError(err instanceof Error ? err.message : "获取数据失败");
+        } finally {
+          setMastodonLoading(false);
         }
         break;
     }
@@ -430,8 +558,8 @@ export default function MomentsPage() {
             animate={{ opacity: 1, y: 0 }}
             transition={effectsEnabled ? { delay: 0.2 } : { duration: 0 }}
           >
-            {/* 筛选标签 - Memos 和 TGTalk */}
-            {(activeTab === "memos" || activeTab === "tgtalk") && currentFilterTabs.length > 1 && (
+            {/* 筛选标签 - Memos、TGTalk 和 Mastodon */}
+            {(activeTab === "memos" || activeTab === "tgtalk" || activeTab === "mastodon") && currentFilterTabs.length > 1 && (
               <div className="mb-6">
                 <FilterTabs
                   tabs={currentFilterTabs}
@@ -499,7 +627,30 @@ export default function MomentsPage() {
                   ))}
                 </div>
               )
-            ) : filteredTGTalkItems.length === 0 ? (
+            ) : activeTab === "tgtalk" ? (
+              filteredTGTalkItems.length === 0 ? (
+                <div className="text-center py-16">
+                  <i className="fas fa-inbox text-4xl mb-4 text-gray-400"></i>
+                  <p className={colors.textSecondary}>
+                    {language === "zh" ? "暂无消息" : "No messages yet"}
+                  </p>
+                </div>
+              ) : (
+                <div className="space-y-4">
+                  {filteredTGTalkItems.map((item, index) => (
+                    <TGTalkCard
+                      key={item.id}
+                      item={item}
+                      index={index}
+                      effectsEnabled={effectsEnabled}
+                      minutesAgo={language === "zh" ? "分钟前" : "m ago"}
+                      hoursAgo={language === "zh" ? "小时前" : "h ago"}
+                      daysAgo={language === "zh" ? "天前" : "d ago"}
+                    />
+                  ))}
+                </div>
+              )
+            ) : filteredMastodonItems.length === 0 ? (
               <div className="text-center py-16">
                 <i className="fas fa-inbox text-4xl mb-4 text-gray-400"></i>
                 <p className={colors.textSecondary}>
@@ -508,7 +659,7 @@ export default function MomentsPage() {
               </div>
             ) : (
               <div className="space-y-4">
-                {filteredTGTalkItems.map((item, index) => (
+                {filteredMastodonItems.map((item, index) => (
                   <TGTalkCard
                     key={item.id}
                     item={item}
@@ -535,7 +686,9 @@ export default function MomentsPage() {
                 ? "数据来自即刻" 
                 : activeTab === "memos"
                 ? "数据来自 Memos"
-                : "数据来自 TGTalk"}
+                : activeTab === "tgtalk"
+                ? "数据来自 TGTalk"
+                : "数据来自 Mastodon"}
             </p>
           </motion.div>
         </div>

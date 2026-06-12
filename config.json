@@ -379,6 +379,10 @@
     "maxItems": 5,
     "scrollSpeed": 3000
   },
+  "momentsPage": {
+    "enabledTabs": ["moments", "memos", "tgtalk", "mastodon"],
+    "defaultTab": "mastondon"
+  },
   "guide": {
     "enabled": true,
     "title": {

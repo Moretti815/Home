@@ -20,7 +20,7 @@ interface MomentItem {
 
 interface MomentsConfig {
 	enabled: boolean;
-	dataSource: "memos" | "moments" | "tgtalk";
+	dataSource: "memos" | "moments" | "tgtalk" | "mastodon";
 	maxItems: number;
 	scrollSpeed: number;
 }
@@ -39,7 +39,7 @@ export default function MomentsTicker() {
 	// 从配置读取说说滚动条配置
 	const momentsConfig: MomentsConfig = {
 		enabled: configData.momentsTicker?.enabled ?? false,
-		dataSource: (configData.momentsTicker?.dataSource as "memos" | "moments" | "tgtalk") ?? "memos",
+		dataSource: (configData.momentsTicker?.dataSource as "memos" | "moments" | "tgtalk" | "mastodon") ?? "memos",
 		maxItems: configData.momentsTicker?.maxItems ?? 5,
 		scrollSpeed: configData.momentsTicker?.scrollSpeed ?? 3000,
 	};
