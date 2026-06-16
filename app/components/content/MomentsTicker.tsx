@@ -20,7 +20,7 @@ interface MomentItem {
 
 interface MomentsConfig {
 	enabled: boolean;
-	dataSource: "memos" | "moments" | "tgtalk" | "mastodon";
+	dataSource: "memos" | "moments" | "tgtalk" | "mastodon" | "icefox";
 	maxItems: number;
 	scrollSpeed: number;
 }
@@ -39,7 +39,7 @@ export default function MomentsTicker() {
 	// 从配置读取说说滚动条配置
 	const momentsConfig: MomentsConfig = {
 		enabled: configData.momentsTicker?.enabled ?? false,
-		dataSource: (configData.momentsTicker?.dataSource as "memos" | "moments" | "tgtalk" | "mastodon") ?? "memos",
+		dataSource: (configData.momentsTicker?.dataSource as "memos" | "moments" | "tgtalk" | "mastodon" | "icefox") ?? "memos",
 		maxItems: configData.momentsTicker?.maxItems ?? 5,
 		scrollSpeed: configData.momentsTicker?.scrollSpeed ?? 3000,
 	};
@@ -160,7 +160,7 @@ export default function MomentsTicker() {
 		// 先解码 HTML 实体
 		let decoded = decodeHtmlEntities(text);
 		// 将 <img> 标签替换为 [图片]
-		decoded = decoded.replace(/<img[^>]*>/gi, ' [图片] ');
+		decoded = decoded.replace(/<img[^>]*>/gi, ' [!图片] ');
 		// 移除其他 HTML 标签
 		decoded = decoded.replace(/<[^>]*>/g, '');
 		// 合并多个空格

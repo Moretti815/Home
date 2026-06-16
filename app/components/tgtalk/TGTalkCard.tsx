@@ -4,8 +4,10 @@
  */
 "use client";
 
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { motion } from "framer-motion";
+import Lightbox from "yet-another-react-lightbox";
+import "yet-another-react-lightbox/styles.css";
 import { useThemeStore } from "../../stores/theme-store";
 import { formatRelativeTime, formatFullDate, cleanContent, filterImages, ensureFullUrl } from "../../utils/tgtalk";
 import type { TGTalkItem } from "../../types/tgtalk";
@@ -52,43 +54,27 @@ export default function TGTalkCard({
 }: TGTalkCardProps) {
   const { theme } = useThemeStore();
   const isDark = theme === "dark";
-  const [lightboxLoaded, setLightboxLoaded] = useState(false);
+  const [lightboxOpen, setLightboxOpen] = useState(false);
+  const [lightboxIndex, setLightboxIndex] = useState(0);
 
   const relativeTime = formatRelativeTime(item.time, minutesAgo, hoursAgo, daysAgo);
   const fullDate = formatFullDate(item.time);
 
   // 过滤图片
   const filteredImages = filterImages(item.image);
-
-  // 加载 Lightbox
-  useEffect(() => {
-    if (typeof window === "undefined" || filteredImages.length === 0) return;
-
-    const script = document.createElement("script");
-    script.src = "https://cdn.jsdmirror.com/gh/Moretti815/blog@main/static/Lightbox/lightbox.js";
-    script.async = true;
-    script.onload = () => {
-      setLightboxLoaded(true);
-    };
-    document.body.appendChild(script);
-
-    return () => {
-      document.body.removeChild(script);
-    };
-  }, [filteredImages.length]);
+  const lightboxSlides = filteredImages.map((img) => ({ src: ensureFullUrl(img) }));
 
   // 处理图片点击
-  const handleImageClick = (imageUrl: string, imgIndex: number) => {
-    if (typeof window !== "undefined" && (window as unknown as { lightbox?: { open: (urls: string[], index: number) => void } }).lightbox) {
-      const urls = filteredImages.map((img) => ensureFullUrl(img));
-      (window as unknown as { lightbox: { open: (urls: string[], index: number) => void } }).lightbox.open(urls, imgIndex);
-    }
+  const handleImageClick = (imgIndex: number) => {
+    setLightboxIndex(imgIndex);
+    setLightboxOpen(true);
   };
 
   // 清理后的内容
   const content = cleanContent(item.text);
 
   return (
+    <>
     <motion.div
       variants={effectsEnabled ? getCardVariants(index) : undefined}
       initial={effectsEnabled ? "hidden" : "visible"}
@@ -115,7 +101,7 @@ export default function TGTalkCard({
               <div
                 key={imgIndex}
                 className="relative rounded-lg overflow-hidden aspect-square cursor-pointer bg-gray-100 dark:bg-gray-800"
-                onClick={() => handleImageClick(imageUrl, imgIndex)}
+                onClick={() => handleImageClick(imgIndex)}
               >
                 <img
                   src={ensureFullUrl(imageUrl)}
@@ -124,11 +110,6 @@ export default function TGTalkCard({
                   loading="lazy"
                   decoding="async"
                 />
-                {!lightboxLoaded && (
-                  <div className="absolute inset-0 flex items-center justify-center">
-                    <i className="fas fa-spinner fa-spin text-gray-400"></i>
-                  </div>
-                )}
               </div>
             ))}
           </div>
@@ -160,5 +141,14 @@ export default function TGTalkCard({
       {/* 悬停渐变遮罩 */}
       <div className="absolute inset-0 bg-gradient-to-br from-purple-500/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none rounded-xl"></div>
     </motion.div>
+    <Lightbox
+      open={lightboxOpen}
+      close={() => setLightboxOpen(false)}
+      slides={lightboxSlides}
+      index={lightboxIndex}
+      carousel={{ finite: lightboxSlides.length <= 1 }}
+      render={{ buttonPrev: lightboxSlides.length <= 1 ? () => null : undefined, buttonNext: lightboxSlides.length <= 1 ? () => null : undefined }}
+    />
+    </>
   );
 }

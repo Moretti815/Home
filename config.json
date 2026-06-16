@@ -375,13 +375,17 @@
   },
   "momentsTicker": {
     "enabled": true,
-    "dataSource": "moments",
+    "dataSource": "icefox",
     "maxItems": 5,
     "scrollSpeed": 3000
   },
   "momentsPage": {
-    "enabledTabs": ["moments", "memos", "tgtalk", "mastodon"],
-    "defaultTab": "mastondon"
+    "enabledTabs": ["memos", "tgtalk", "mastodon", "icefox"],
+    "defaultTab": "mastondon",
+    "icefox": {
+      "apiUrl": "https://m.2005815.xyz/v1/memo",
+      "refreshInterval": 60000
+    }
   },
   "guide": {
     "enabled": true,

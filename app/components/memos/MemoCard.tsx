@@ -4,9 +4,11 @@
  */
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { useState } from "react";
 import { motion } from "framer-motion";
 import ReactMarkdown from "react-markdown";
+import Lightbox from "yet-another-react-lightbox";
+import "yet-another-react-lightbox/styles.css";
 import { useThemeStore } from "../../stores/theme-store";
 import { formatRelativeTime, formatFullDate, getImageUrl, isImageAttachment } from "../../utils/memo";
 import type { Memo } from "../../types/memo";
@@ -43,6 +45,22 @@ const getImageLayoutClass = (count: number) => {
   return "memo-images-grid";
 };
 
+function extractMarkdownImageUrls(content: string): string[] {
+  const urls: string[] = [];
+  const imageRegex = /!\[[^\]]*]\(([^)\s]+)(?:\s+"[^"]*")?\)/g;
+  let match;
+
+  while ((match = imageRegex.exec(content)) !== null) {
+    urls.push(match[1]);
+  }
+
+  return urls;
+}
+
+function uniqueUrls(urls: string[]): string[] {
+  return Array.from(new Set(urls.filter(Boolean)));
+}
+
 export default function MemoCard({
   memo,
   index,
@@ -53,39 +71,20 @@ export default function MemoCard({
 }: MemoCardProps) {
   const { theme } = useThemeStore();
   const isDark = theme === "dark";
-  const cardRef = useRef<HTMLDivElement>(null);
-  const [lightboxLoaded, setLightboxLoaded] = useState(false);
+  const [lightboxOpen, setLightboxOpen] = useState(false);
+  const [lightboxIndex, setLightboxIndex] = useState(0);
 
   const relativeTime = formatRelativeTime(memo.createTime, minutesAgo, hoursAgo, daysAgo);
   const fullDate = formatFullDate(memo.createTime);
 
   // 过滤图片附件
   const imageAttachments = memo.attachments.filter(isImageAttachment);
-
-  // 加载 Lightbox
-  useEffect(() => {
-    if (typeof window === "undefined" || imageAttachments.length === 0) return;
-
-    // 动态加载 Lightbox 脚本
-    const script = document.createElement("script");
-    script.src = "https://cdn.jsdmirror.com/gh/Moretti815/blog@main/static/Lightbox/lightbox.js";
-    script.async = true;
-    script.onload = () => {
-      setLightboxLoaded(true);
-    };
-    document.body.appendChild(script);
-
-    return () => {
-      document.body.removeChild(script);
-    };
-  }, [imageAttachments.length]);
+  const attachmentImageUrls = imageAttachments.map((attachment) => getImageUrl(attachment));
 
   // 处理图片点击
-  const handleImageClick = (imageUrl: string, imgIndex: number) => {
-    if (typeof window !== "undefined" && (window as unknown as { lightbox?: { open: (urls: string[], index: number) => void } }).lightbox) {
-      const urls = imageAttachments.map((att) => getImageUrl(att));
-      (window as unknown as { lightbox: { open: (urls: string[], index: number) => void } }).lightbox.open(urls, imgIndex);
-    }
+  const handleImageClick = (imgIndex: number) => {
+    setLightboxIndex(imgIndex);
+    setLightboxOpen(true);
   };
 
   // 处理内容中的链接
@@ -95,9 +94,21 @@ export default function MemoCard({
     return processed;
   };
 
+  const processedContent = processContent(memo.content);
+  const markdownImageUrls = extractMarkdownImageUrls(processedContent);
+  const lightboxImageUrls = uniqueUrls([...markdownImageUrls, ...attachmentImageUrls]);
+  const lightboxSlides = lightboxImageUrls.map((image) => ({ src: image }));
+
+  const handleMarkdownImageClick = (imageUrl: string) => {
+    const imageIndex = lightboxImageUrls.indexOf(imageUrl);
+    if (imageIndex < 0) return;
+    setLightboxIndex(imageIndex);
+    setLightboxOpen(true);
+  };
+
   return (
+    <>
     <motion.div
-      ref={cardRef}
       variants={effectsEnabled ? getCardVariants(index) : undefined}
       initial={effectsEnabled ? "hidden" : "visible"}
       animate="visible"
@@ -134,6 +145,20 @@ export default function MemoCard({
                   className={`break-all ${isDark ? "text-purple-400 hover:text-purple-300" : "text-purple-600 hover:text-purple-700"}`}
                 />
               ),
+              img: ({ node, src = "", alt = "", ...props }) => (
+                <img
+                  {...props}
+                  src={src}
+                  alt={alt}
+                  className="cursor-pointer rounded-lg"
+                  onClick={(event) => {
+                    event.preventDefault();
+                    if (typeof src === "string") {
+                      handleMarkdownImageClick(src);
+                    }
+                  }}
+                />
+              ),
               code: ({ node, className, children, ...props }) => {
                 const isInline = !className?.includes('language-');
                 return isInline ? (
@@ -157,7 +182,7 @@ export default function MemoCard({
               },
             }}
           >
-            {processContent(memo.content)}
+            {processedContent}
           </ReactMarkdown>
         </div>
 
@@ -170,7 +195,7 @@ export default function MemoCard({
                 <div
                   key={attachment.name}
                   className="relative rounded-lg overflow-hidden aspect-square cursor-pointer bg-gray-100 dark:bg-gray-800"
-                  onClick={() => handleImageClick(imageUrl, imgIndex)}
+                  onClick={() => handleImageClick(imgIndex)}
                 >
                   <img
                     src={imageUrl}
@@ -179,11 +204,6 @@ export default function MemoCard({
                     loading="lazy"
                     decoding="async"
                   />
-                  {!lightboxLoaded && (
-                    <div className="absolute inset-0 flex items-center justify-center">
-                      <i className="fas fa-spinner fa-spin text-gray-400"></i>
-                    </div>
-                  )}
                 </div>
               );
             })}
@@ -237,5 +257,14 @@ export default function MemoCard({
       {/* 悬停渐变遮罩 */}
       <div className="absolute inset-0 bg-gradient-to-br from-purple-500/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none rounded-xl"></div>
     </motion.div>
+    <Lightbox
+      open={lightboxOpen}
+      close={() => setLightboxOpen(false)}
+      slides={lightboxSlides}
+      index={lightboxIndex}
+      carousel={{ finite: lightboxSlides.length <= 1 }}
+      render={{ buttonPrev: lightboxSlides.length <= 1 ? () => null : undefined, buttonNext: lightboxSlides.length <= 1 ? () => null : undefined }}
+    />
+    </>
   );
 }

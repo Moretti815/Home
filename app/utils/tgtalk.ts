@@ -118,11 +118,22 @@ export function filterItemsByTag(items: TGTalkItem[], tag: string): TGTalkItem[]
  * 确保图片 URL 完整
  */
 export function ensureFullUrl(url: string): string {
-    if (url.startsWith("//")) {
-        return `https:${url}`;
+    const trimmedUrl = url.trim();
+
+    if (trimmedUrl.startsWith("/proxy/")) {
+        const encodedUrl = trimmedUrl.slice("/proxy/".length);
+        try {
+            return ensureFullUrl(decodeURIComponent(encodedUrl));
+        } catch {
+            return trimmedUrl;
+        }
     }
-    if (url.startsWith("http")) {
-        return url;
+
+    if (trimmedUrl.startsWith("//")) {
+        return `https:${trimmedUrl}`;
     }
-    return url;
+    if (/^https?:\/\//i.test(trimmedUrl)) {
+        return trimmedUrl;
+    }
+    return trimmedUrl;
 }

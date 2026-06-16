@@ -21,13 +21,16 @@ import TabSwitcher from "../components/moments/TabSwitcher";
 import MomentCard from "../components/moments/MomentCard";
 import MemoCard from "../components/memos/MemoCard";
 import TGTalkCard from "../components/tgtalk/TGTalkCard";
+import IcefoxCard from "../components/icefox/IcefoxCard";
 import { FilterTabs } from "../components/filter-tabs";
 import { parseRSS, transformRSSItemToMoment } from "../utils/moment";
 import { getAllTags as getAllMemoTags, filterMemosByTag } from "../utils/memo";
 import { getAllTags as getAllTGTalkTags, filterItemsByTag as filterTGTalkByTag } from "../utils/tgtalk";
+import { extractIcefoxPosts, filterPostsByTag as filterIcefoxByTag, getAllTags as getAllIcefoxTags, sortIcefoxPosts } from "../utils/icefox";
 import type { Moment } from "../types/moment";
 import type { Memo, FilterTab } from "../types/memo";
 import type { TGTalkItem } from "../types/tgtalk";
+import type { IcefoxPost } from "../types/icefox";
 import configData from "../../config.json";
 
 // API 地址
@@ -35,6 +38,7 @@ const RSS_URL = "/api/moments";
 const MEMOS_API_URL = "/api/memos";
 const TGTALK_API_URL = "/api/tgtalk";
 const MASTODON_API_URL = "/api/mastodon";
+const ICEFOX_API_URL = "/api/icefox";
 
 // Tab 配置
 const allTabs = [
@@ -42,17 +46,18 @@ const allTabs = [
   { value: "memos", label: "Memos", icon: "fas fa-sticky-note" },
   { value: "tgtalk", label: "TGTalk", icon: "fab fa-telegram" },
   { value: "mastodon", label: "Mastodon", icon: "fab fa-mastodon" },
+  { value: "icefox", label: "Icefox", icon: "fas fa-snowflake" },
 ];
 
 // 从配置读取启用的 Tab
 const getEnabledTabs = () => {
-  const enabledTabs = configData.momentsPage?.enabledTabs || ["moments", "memos", "tgtalk", "mastodon"];
+  const enabledTabs = configData.momentsPage?.enabledTabs || ["moments", "memos", "tgtalk", "mastodon", "icefox"];
   return allTabs.filter(tab => enabledTabs.includes(tab.value));
 };
 
 // 获取默认 Tab
 const getDefaultTab = () => {
-  const enabledTabs = configData.momentsPage?.enabledTabs || ["moments", "memos", "tgtalk", "mastodon"];
+  const enabledTabs = configData.momentsPage?.enabledTabs || ["moments", "memos", "tgtalk", "mastodon", "icefox"];
   const defaultTab = configData.momentsPage?.defaultTab;
   if (defaultTab && enabledTabs.includes(defaultTab)) {
     return defaultTab;
@@ -126,6 +131,12 @@ export default function MomentsPage() {
   const [mastodonError, setMastodonError] = useState<string | null>(null);
   const [mastodonActiveTag, setMastodonActiveTag] = useState("all");
 
+  // Icefox 数据
+  const [icefoxPosts, setIcefoxPosts] = useState<IcefoxPost[]>([]);
+  const [icefoxLoading, setIcefoxLoading] = useState(true);
+  const [icefoxError, setIcefoxError] = useState<string | null>(null);
+  const [icefoxActiveTag, setIcefoxActiveTag] = useState("all");
+
   useEffect(() => {
     hydrate();
     setMounted(true);
@@ -133,7 +144,7 @@ export default function MomentsPage() {
 
   // 确保当前 Tab 在启用列表中
   useEffect(() => {
-    const enabledTabs = configData.momentsPage?.enabledTabs || ["moments", "memos", "tgtalk", "mastodon"];
+    const enabledTabs = configData.momentsPage?.enabledTabs || ["moments", "memos", "tgtalk", "mastodon", "icefox"];
     if (!enabledTabs.includes(activeTab)) {
       setActiveTab(enabledTabs[0] || "moments");
     }
@@ -144,7 +155,7 @@ export default function MomentsPage() {
     if (!mounted) return;
     
     // 检查是否启用了说说 Tab
-    const enabledTabs = configData.momentsPage?.enabledTabs || ["moments", "memos", "tgtalk", "mastodon"];
+    const enabledTabs = configData.momentsPage?.enabledTabs || ["moments", "memos", "tgtalk", "mastodon", "icefox"];
     if (!enabledTabs.includes("moments")) {
       setMomentsLoading(false);
       return;
@@ -178,7 +189,7 @@ export default function MomentsPage() {
     if (!mounted) return;
     
     // 检查是否启用了 Memos Tab
-    const enabledTabs = configData.momentsPage?.enabledTabs || ["moments", "memos", "tgtalk", "mastodon"];
+    const enabledTabs = configData.momentsPage?.enabledTabs || ["moments", "memos", "tgtalk", "mastodon", "icefox"];
     if (!enabledTabs.includes("memos")) {
       setMemosLoading(false);
       return;
@@ -215,7 +226,7 @@ export default function MomentsPage() {
     if (!mounted) return;
     
     // 检查是否启用了 TGTalk Tab
-    const enabledTabs = configData.momentsPage?.enabledTabs || ["moments", "memos", "tgtalk", "mastodon"];
+    const enabledTabs = configData.momentsPage?.enabledTabs || ["moments", "memos", "tgtalk", "mastodon", "icefox"];
     if (!enabledTabs.includes("tgtalk")) {
       setTGTalkLoading(false);
       return;
@@ -248,7 +259,7 @@ export default function MomentsPage() {
     if (!mounted) return;
     
     // 检查是否启用了 Mastodon Tab
-    const enabledTabs = configData.momentsPage?.enabledTabs || ["moments", "memos", "tgtalk", "mastodon"];
+    const enabledTabs = configData.momentsPage?.enabledTabs || ["moments", "memos", "tgtalk", "mastodon", "icefox"];
     if (!enabledTabs.includes("mastodon")) {
       setMastodonLoading(false);
       return;
@@ -273,6 +284,37 @@ export default function MomentsPage() {
 
     fetchMastodon();
     const interval = setInterval(fetchMastodon, 60000);
+    return () => clearInterval(interval);
+  }, [mounted]);
+
+  // 获取 Icefox 数据
+  useEffect(() => {
+    if (!mounted) return;
+
+    const enabledTabs = configData.momentsPage?.enabledTabs || ["moments", "memos", "tgtalk", "mastodon", "icefox"];
+    if (!enabledTabs.includes("icefox")) {
+      setIcefoxLoading(false);
+      return;
+    }
+
+    const fetchIcefox = async () => {
+      try {
+        setIcefoxLoading(true);
+        const response = await fetch(ICEFOX_API_URL);
+        if (!response.ok) {
+          throw new Error(`HTTP ${response.status}`);
+        }
+        const data = await response.json();
+        setIcefoxPosts(sortIcefoxPosts(extractIcefoxPosts(data)));
+      } catch (err) {
+        setIcefoxError(err instanceof Error ? err.message : "获取数据失败");
+      } finally {
+        setIcefoxLoading(false);
+      }
+    };
+
+    fetchIcefox();
+    const interval = setInterval(fetchIcefox, configData.momentsPage?.icefox?.refreshInterval ?? 60000);
     return () => clearInterval(interval);
   }, [mounted]);
 
@@ -327,6 +369,21 @@ export default function MomentsPage() {
     return tabs;
   }, [mastodonTags, mastodonItems, language]);
 
+  // Icefox 标签筛选
+  const icefoxTags = useMemo(() => getAllIcefoxTags(icefoxPosts), [icefoxPosts]);
+  const filteredIcefoxPosts = useMemo(() => filterIcefoxByTag(icefoxPosts, icefoxActiveTag), [icefoxPosts, icefoxActiveTag]);
+
+  const icefoxFilterTabs: FilterTab[] = useMemo(() => {
+    const tabs: FilterTab[] = [
+      { value: "all", label: language === "zh" ? "全部" : "All", icon: "fas fa-th-large", count: icefoxPosts.length },
+    ];
+    icefoxTags.forEach((tag) => {
+      const count = icefoxPosts.filter((post) => post.tags?.some((item) => item.name === tag)).length;
+      tabs.push({ value: tag, label: tag, count });
+    });
+    return tabs;
+  }, [icefoxTags, icefoxPosts, language]);
+
   const pageTitle = language === "zh" ? "动态" : "Moments";
   const pageSubtitle = language === "zh" ? "记录生活的点滴" : "Life moments";
 
@@ -337,9 +394,10 @@ export default function MomentsPage() {
       case "memos": return filteredMemos.length;
       case "tgtalk": return filteredTGTalkItems.length;
       case "mastodon": return filteredMastodonItems.length;
+      case "icefox": return filteredIcefoxPosts.length;
       default: return 0;
     }
-  }, [activeTab, moments, filteredMemos, filteredTGTalkItems, filteredMastodonItems]);
+  }, [activeTab, moments, filteredMemos, filteredTGTalkItems, filteredMastodonItems, filteredIcefoxPosts]);
 
   const currentLoading = useMemo(() => {
     switch (activeTab) {
@@ -347,9 +405,10 @@ export default function MomentsPage() {
       case "memos": return memosLoading;
       case "tgtalk": return tgtalkLoading;
       case "mastodon": return mastodonLoading;
+      case "icefox": return icefoxLoading;
       default: return false;
     }
-  }, [activeTab, momentsLoading, memosLoading, tgtalkLoading, mastodonLoading]);
+  }, [activeTab, momentsLoading, memosLoading, tgtalkLoading, mastodonLoading, icefoxLoading]);
 
   const currentError = useMemo(() => {
     switch (activeTab) {
@@ -357,14 +416,15 @@ export default function MomentsPage() {
       case "memos": return memosError;
       case "tgtalk": return tgtalkError;
       case "mastodon": return mastodonError;
+      case "icefox": return icefoxError;
       default: return null;
     }
-  }, [activeTab, momentsError, memosError, tgtalkError, mastodonError]);
+  }, [activeTab, momentsError, memosError, tgtalkError, mastodonError, icefoxError]);
 
   // 当前筛选标签
-  const currentFilterTabs = activeTab === "memos" ? memoFilterTabs : activeTab === "mastodon" ? mastodonFilterTabs : tgtalkFilterTabs;
-  const currentActiveTag = activeTab === "memos" ? memoActiveTag : activeTab === "mastodon" ? mastodonActiveTag : tgtalkActiveTag;
-  const setCurrentActiveTag = activeTab === "memos" ? setMemoActiveTag : activeTab === "mastodon" ? setMastodonActiveTag : setTGTalkActiveTag;
+  const currentFilterTabs = activeTab === "memos" ? memoFilterTabs : activeTab === "mastodon" ? mastodonFilterTabs : activeTab === "icefox" ? icefoxFilterTabs : tgtalkFilterTabs;
+  const currentActiveTag = activeTab === "memos" ? memoActiveTag : activeTab === "mastodon" ? mastodonActiveTag : activeTab === "icefox" ? icefoxActiveTag : tgtalkActiveTag;
+  const setCurrentActiveTag = activeTab === "memos" ? setMemoActiveTag : activeTab === "mastodon" ? setMastodonActiveTag : activeTab === "icefox" ? setIcefoxActiveTag : setTGTalkActiveTag;
 
   // 刷新数据
   const handleRefresh = async () => {
@@ -442,6 +502,22 @@ export default function MomentsPage() {
           setMastodonError(err instanceof Error ? err.message : "获取数据失败");
         } finally {
           setMastodonLoading(false);
+        }
+        break;
+      case "icefox":
+        setIcefoxLoading(true);
+        setIcefoxError(null);
+        try {
+          const response = await fetch(`${ICEFOX_API_URL}?t=${Date.now()}`);
+          if (!response.ok) {
+            throw new Error(`HTTP ${response.status}`);
+          }
+          const data = await response.json();
+          setIcefoxPosts(sortIcefoxPosts(extractIcefoxPosts(data)));
+        } catch (err) {
+          setIcefoxError(err instanceof Error ? err.message : "获取数据失败");
+        } finally {
+          setIcefoxLoading(false);
         }
         break;
     }
@@ -526,6 +602,8 @@ export default function MomentsPage() {
                           ? (language === "zh" ? "条动态" : "moments")
                           : activeTab === "memos"
                           ? (language === "zh" ? "条记录" : "memos")
+                          : activeTab === "icefox"
+                          ? (language === "zh" ? "条动态" : "posts")
                           : (language === "zh" ? "条消息" : "messages")}
                       </span>
                     </div>
@@ -558,8 +636,8 @@ export default function MomentsPage() {
             animate={{ opacity: 1, y: 0 }}
             transition={effectsEnabled ? { delay: 0.2 } : { duration: 0 }}
           >
-            {/* 筛选标签 - Memos、TGTalk 和 Mastodon */}
-            {(activeTab === "memos" || activeTab === "tgtalk" || activeTab === "mastodon") && currentFilterTabs.length > 1 && (
+            {/* 筛选标签 - Memos、TGTalk、Mastodon 和 Icefox */}
+            {(activeTab === "memos" || activeTab === "tgtalk" || activeTab === "mastodon" || activeTab === "icefox") && currentFilterTabs.length > 1 && (
               <div className="mb-6">
                 <FilterTabs
                   tabs={currentFilterTabs}
@@ -650,6 +728,29 @@ export default function MomentsPage() {
                   ))}
                 </div>
               )
+            ) : activeTab === "icefox" ? (
+              filteredIcefoxPosts.length === 0 ? (
+                <div className="text-center py-16">
+                  <i className="fas fa-inbox text-4xl mb-4 text-gray-400"></i>
+                  <p className={colors.textSecondary}>
+                    {language === "zh" ? "暂无动态" : "No posts yet"}
+                  </p>
+                </div>
+              ) : (
+                <div className="space-y-4">
+                  {filteredIcefoxPosts.map((post, index) => (
+                    <IcefoxCard
+                      key={post.cid}
+                      post={post}
+                      index={index}
+                      effectsEnabled={effectsEnabled}
+                      minutesAgo={language === "zh" ? "分钟前" : "m ago"}
+                      hoursAgo={language === "zh" ? "小时前" : "h ago"}
+                      daysAgo={language === "zh" ? "天前" : "d ago"}
+                    />
+                  ))}
+                </div>
+              )
             ) : filteredMastodonItems.length === 0 ? (
               <div className="text-center py-16">
                 <i className="fas fa-inbox text-4xl mb-4 text-gray-400"></i>
@@ -688,6 +789,8 @@ export default function MomentsPage() {
                 ? "数据来自 Memos"
                 : activeTab === "tgtalk"
                 ? "数据来自 TGTalk"
+                : activeTab === "icefox"
+                ? "数据来自 Icefox"
                 : "数据来自 Mastodon"}
             </p>
           </motion.div>
@@ -696,14 +799,15 @@ export default function MomentsPage() {
 
       {/* 全局样式 */}
       <style jsx global>{`
-        .moment-card, .memo-card, .tgtalk-card {
+        .moment-card, .memo-card, .tgtalk-card, .icefox-card {
           opacity: 1;
         }
 
         /* 仅在启用动画效果时使用 CSS 动画 */
         .effects-enabled .moment-card,
         .effects-enabled .memo-card,
-        .effects-enabled .tgtalk-card {
+        .effects-enabled .tgtalk-card,
+        .effects-enabled .icefox-card {
           animation: fadeInUp 0.5s ease-out forwards;
           opacity: 0;
         }
@@ -791,21 +895,37 @@ export default function MomentsPage() {
         }
 
         /* TGTalk 内容样式 */
-        .tgtalk-card a {
+        .tgtalk-card a,
+        .icefox-card a {
           color: inherit;
           text-decoration: none;
         }
         
-        .tgtalk-card a:hover {
+        .tgtalk-card a:hover,
+        .icefox-card a:hover {
           text-decoration: underline;
         }
 
-        .dark .tgtalk-card a {
+        .dark .tgtalk-card a,
+        .dark .icefox-card a {
           color: #a78bfa;
         }
         
-        .dark .tgtalk-card a:hover {
+        .dark .tgtalk-card a:hover,
+        .dark .icefox-card a:hover {
           color: #c4b5fd;
+        }
+
+        .icefox-card .prose img {
+          max-width: 100%;
+          height: auto;
+          border-radius: 0.75rem;
+        }
+
+        .icefox-card .prose video,
+        .icefox-card .prose iframe {
+          max-width: 100%;
+          border-radius: 0.75rem;
         }
       `}</style>
     </>

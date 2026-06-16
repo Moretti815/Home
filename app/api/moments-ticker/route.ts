@@ -3,11 +3,14 @@
  * 获取最新的说说数据，无缓存，每次刷新都获取最新数据
  */
 import { NextResponse } from "next/server";
+import configData from "../../../config.json";
+import { extractIcefoxPosts, normalizeContent, sortIcefoxPosts, toTimestamp } from "../../utils/icefox";
 
 const MEMOS_API_URL = "https://m.314926.xyz/api/v1/memos";
 const RSS_URL = "https://rsshub.261770.xyz/jike/user/07152f0c-0f65-4501-855b-031f3e20e4a5";
 const TGTALK_API_URL = "https://tgtalk.kemiaosw.top/";
 const MASTODON_API_URL = "https://mastodon-api.20050815.xyz/";
+const ICEFOX_API_URL = configData.momentsPage?.icefox?.apiUrl || "https://m.2005815.xyz/v1/memo";
 
 interface MomentItem {
     id: string;
@@ -219,6 +222,68 @@ async function fetchMastodon(): Promise<MomentItem[]> {
     }
 }
 
+function hasMedia(value: unknown): boolean {
+    return Array.isArray(value) ? value.length > 0 : Boolean(value);
+}
+
+function getIcefoxType(post: ReturnType<typeof extractIcefoxPosts>[number]): MomentItem["type"] {
+    if (post.images && post.images.length > 0) return "image";
+    if (hasMedia(post.video)) return "video";
+    if (hasMedia(post.music)) return "music";
+    if (post.linkCard) return "link";
+    return "text";
+}
+
+function buildIcefoxTickerContent(post: ReturnType<typeof extractIcefoxPosts>[number]): string {
+    const rawContent = normalizeContent(post.content || post.summary || "");
+    const hasImage =
+        Boolean(post.images?.length) ||
+        /<img\b/i.test(rawContent) ||
+        /!\[[^\]]*]\([^)]+\)/.test(rawContent);
+
+    const textContent = stripHtml(rawContent.replace(/!\[[^\]]*]\([^)]+\)/g, " "))
+        .replace(/\s+/g, " ")
+        .trim();
+    const placeholders: string[] = [];
+
+    if (hasImage) placeholders.push("[!图片]");
+    if (post.linkCard) placeholders.push("[!卡片]");
+
+    return [textContent, ...placeholders].filter(Boolean).join(" ");
+}
+
+async function fetchIcefox(): Promise<MomentItem[]> {
+    try {
+        const response = await fetch(ICEFOX_API_URL, {
+            headers: {
+                "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36",
+                "Accept": "application/json",
+            },
+        });
+
+        if (!response.ok) {
+            throw new Error(`Icefox API error: ${response.status}`);
+        }
+
+        const data = await response.json();
+        const posts = sortIcefoxPosts(extractIcefoxPosts(data));
+
+        return posts.map((post, index) => {
+            const timestamp = toTimestamp(post.created);
+
+            return {
+                id: String(post.cid || `icefox-${index}`),
+                content: buildIcefoxTickerContent(post),
+                date: timestamp ? formatDate(new Date(timestamp).toISOString()) : "",
+                type: getIcefoxType(post),
+            };
+        });
+    } catch (error) {
+        console.error("[Moments Ticker] Icefox fetch error:", error);
+        return [];
+    }
+}
+
 export async function GET(request: Request) {
     try {
         const { searchParams } = new URL(request.url);
@@ -241,6 +306,9 @@ export async function GET(request: Request) {
                 break;
             case "mastodon":
                 items = await fetchMastodon();
+                break;
+            case "icefox":
+                items = await fetchIcefox();
                 break;
             default:
                 return NextResponse.json(
